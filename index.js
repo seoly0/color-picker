@@ -207,6 +207,9 @@ export class HSVPicker extends HTMLElement {
     this.pickers.hue.addEventListener('mouseup', (evt) => {
       this.hueSelect = false
     })
+    this.pickers.hue.addEventListener('mouseleave', (evt) => {
+      this.hueSelect = false
+    })
     this.pickers.hue.addEventListener('mousemove', (evt) => {
       if (this.hueSelect) {
         const rect = evt.target.getBoundingClientRect()
@@ -238,8 +241,35 @@ export class HSVPicker extends HTMLElement {
       this.drawSBPicker()
     })
 
+    this.pickers.sb.addEventListener('mousedown', (evt) => {
+      this.sbSelect = true
+    })
+    this.pickers.sb.addEventListener('mouseup', (evt) => {
+      this.sbSelect = false
+    })
+    this.pickers.sb.addEventListener('mouseleave', (evt) => {
+      this.sbSelect = false
+    })
+    this.pickers.sb.addEventListener('mousemove', (evt) => {
+      if (this.sbSelect) {
+        const rect = evt.target.getBoundingClientRect()
+        const x = evt.clientX - rect.x
+        const y = evt.clientY - rect.y
+  
+        const ctx = this.pickers.sb.getContext('2d')
+        const [r, g, b] = ctx.getImageData(x, y, 1, 1).data
+        const hex = '#' + ('000000' + colorUtils.rgbToHex(r, g, b)).slice(-6)
+  
+        this.value = hex
+        const inputEvent = new InputEvent('input', {
+          bubbles: true,
+          cancelable: false,
+          data: hex,
+        })
+        this.dispatchEvent(inputEvent)
+      }
+    })
     this.pickers.sb.addEventListener('click', (evt) => {
-
       const rect = evt.target.getBoundingClientRect()
       const x = evt.clientX - rect.x
       const y = evt.clientY - rect.y
