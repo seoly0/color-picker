@@ -138,8 +138,11 @@ export class HSVPicker extends HTMLElement {
   constructor() {
     super()
 
+    this.option = {}
     this.state = {}
     this.pickers = {}
+    this.indicators = {}
+    // ??
     this.actions = {}
   }
 
@@ -157,13 +160,32 @@ export class HSVPicker extends HTMLElement {
   connectedCallback() {
     this.value = this.getAttribute('value') ?? 'red'
     if ( !!!CSS.supports('color', this.value) ) throw Error('')
-
+    
+    this.initOption()
     this.initState()
     this.initPicker()
     this.drawHuePicker()
 
-    if ( this.state.sbCombine ) {
+    if ( this.option.sbCombine ) {
       this.drawSBPicker()
+    }
+  }
+
+  initOption() {
+
+    this.option.hueDirection = this.getAttribute('hue-direction') ?? 'horizontal'
+    this.option.hueType = this.getAttribute('hue-type') ?? 'linear'
+    if ( this.option.hueType === 'linear' ) {
+      this.option.hueLength = valueUtils.toInt(this.getAttribute('hue-length'), 200)
+      this.option.hueThickness = valueUtils.toInt(this.getAttribute('hue-thickness'), 10)
+    }
+    else if (this.option.hueType === 'circular') {
+      // TODO
+    }
+    this.option.sbCombine = this.hasAttribute('sb-combine')
+    if ( this.option.sbCombine ) {
+      this.option.sbWidth = valueUtils.toInt(this.getAttribute('sb-width'), 200)
+      this.option.sbHeight = valueUtils.toInt(this.getAttribute('sb-height'), 200)
     }
   }
 
@@ -183,119 +205,119 @@ export class HSVPicker extends HTMLElement {
     this.state.huePosition = 0
     this.state.saturationPosition = 0
     this.state.brightnessPosition = 0
-
-    this.state.hueDirection = this.getAttribute('hue-direction') ?? 'horizontal'
-    this.state.hueType = this.getAttribute('hue-type') ?? 'linear'
-    if ( this.state.hueType === 'linear' ) {
-      this.state.hueLength = valueUtils.toInt(this.getAttribute('hue-length'), 200)
-      this.state.hueThickness = valueUtils.toInt(this.getAttribute('hue-thickness'), 10)
-    }
-    this.state.sbCombine = this.hasAttribute('sb-combine')
-    if ( this.state.sbCombine ) {
-      this.state.sbWidth = valueUtils.toInt(this.getAttribute('sb-width'), 200)
-      this.state.sbHeight = valueUtils.toInt(this.getAttribute('sb-height'), 200)
-    }
   }
 
   initPicker() {
     this.pickers.hue = document.createElement('canvas')
     this.pickers.sb = document.createElement('canvas')
 
-    this.pickers.hue.addEventListener('mousedown', (evt) => {
-      this.hueSelect = true
-    })
-    this.pickers.hue.addEventListener('mouseup', (evt) => {
-      this.hueSelect = false
-    })
-    this.pickers.hue.addEventListener('mouseleave', (evt) => {
-      this.hueSelect = false
-    })
-    this.pickers.hue.addEventListener('mousemove', (evt) => {
-      if (this.hueSelect) {
-        const rect = evt.target.getBoundingClientRect()
-        const x = evt.clientX - rect.x
-        const y = evt.clientY - rect.y
-        
-        const ctx = this.pickers.hue.getContext('2d')
-        const [r, g, b] = ctx.getImageData(x, y, 1, 1).data
-        const hueHex = '#' + ('000000' + colorUtils.rgbToHex(r, g, b)).slice(-6)
+    this.indicators.hue = document.createElement('div')
+    this.indicators.sb = document.createElement('div')
 
-        const { h } = colorUtils.hexToHsv(hueHex)
-
-        this.state.hue = h
-        this.drawSBPicker()
-      }
-    })
-    this.pickers.hue.addEventListener('click', (evt) => {
+    const calcValue = () => {
+      // const hCTX = this.pickers.hue.getContext('2d')
+      // const [r, g, b] = hCTX.getImageData(this.state.huePosition, 0, 1, 1).data
+      // const hueHex = '#' + ('000000' + colorUtils.rgbToHex(r, g, b)).slice(-6)
+      // const { h } = colorUtils.hexToHsv(hueHex)
+      // this.state.hue = h
+    }
+    const setH = (evt) => {
       const rect = evt.target.getBoundingClientRect()
       const x = evt.clientX - rect.x
       const y = evt.clientY - rect.y
+      
+      if (this.option.hueType == 'linear' && this.option.hueDirection == 'horizontal') {
+        this.state.huePosition = x
+      }
+      else if (this.option.hueType == 'linear' && this.option.hueDirection == 'vertical') {
+        this.state.huePosition = y
+      }
       
       const ctx = this.pickers.hue.getContext('2d')
       const [r, g, b] = ctx.getImageData(x, y, 1, 1).data
       const hueHex = '#' + ('000000' + colorUtils.rgbToHex(r, g, b)).slice(-6)
 
-      const { h, s, v } = colorUtils.hexToHsv(hueHex)
+      const { h } = colorUtils.hexToHsv(hueHex)
 
       this.state.hue = h
       this.drawSBPicker()
-    })
-
-    this.pickers.sb.addEventListener('mousedown', (evt) => {
-      this.sbSelect = true
-    })
-    this.pickers.sb.addEventListener('mouseup', (evt) => {
-      this.sbSelect = false
-    })
-    this.pickers.sb.addEventListener('mouseleave', (evt) => {
-      this.sbSelect = false
-    })
-    this.pickers.sb.addEventListener('mousemove', (evt) => {
-      if (this.sbSelect) {
-        const rect = evt.target.getBoundingClientRect()
-        const x = evt.clientX - rect.x
-        const y = evt.clientY - rect.y
-  
-        const ctx = this.pickers.sb.getContext('2d')
-        const [r, g, b] = ctx.getImageData(x, y, 1, 1).data
-        const hex = '#' + ('000000' + colorUtils.rgbToHex(r, g, b)).slice(-6)
-  
-        this.value = hex
-        const inputEvent = new InputEvent('input', {
-          bubbles: true,
-          cancelable: false,
-          data: hex,
-        })
-        this.dispatchEvent(inputEvent)
-      }
-    })
-    this.pickers.sb.addEventListener('click', (evt) => {
+    }
+    const setSV = (evt) => {
       const rect = evt.target.getBoundingClientRect()
       const x = evt.clientX - rect.x
       const y = evt.clientY - rect.y
 
-      const ctx = this.pickers.sb.getContext('2d')
-      const [r, g, b] = ctx.getImageData(x, y, 1, 1).data
-      const hex = '#' + ('000000' + colorUtils.rgbToHex(r, g, b)).slice(-6)
+      this.state.saturationPosition = x
+      this.state.brightnessPosition = y
 
-      this.value = hex
+      const ctx = this.pickers.sb.getContext('2d')
+      // NOTE: x+1, y+1는 rgb값이 좌측상단(하얀색) 클릭시 r,g,b가 0,0,0인 경우 때문
+      const [r, g, b] = ctx.getImageData(x + 1, y + 1, 1, 1).data
+      const svHex = '#' + ('000000' + colorUtils.rgbToHex(r, g, b)).slice(-6)
+
+      const { h, s, v } = colorUtils.hexToHsv(svHex)
+      console.log(h,s,v)
+
+      this.value = svHex
       const inputEvent = new InputEvent('input', {
         bubbles: true,
         cancelable: false,
-        data: hex,
+        data: svHex,
       })
       this.dispatchEvent(inputEvent)
+    }
+
+    this.pickers.hue.addEventListener('mousedown', (evt) => {
+      this.state.hueSelect = true
+    })
+    this.pickers.hue.addEventListener('mouseup', (evt) => {
+      this.state.hueSelect = false
+    })
+    this.pickers.hue.addEventListener('mouseleave', (evt) => {
+      this.state.hueSelect = false
+    })
+    this.pickers.hue.addEventListener('mousemove', (evt) => {
+      if (this.state.hueSelect) setH(evt)
+    })
+    this.pickers.hue.addEventListener('click', (evt) => {
+      setH(evt)
+    })
+    this.pickers.sb.addEventListener('mousedown', (evt) => {
+      this.state.sbSelect = true
+    })
+    this.pickers.sb.addEventListener('mouseup', (evt) => {
+      this.state.sbSelect = false
+    })
+    this.pickers.sb.addEventListener('mouseleave', (evt) => {
+      this.state.sbSelect = false
+    })
+    this.pickers.sb.addEventListener('mousemove', (evt) => {
+      if (this.state.sbSelect) setSV(evt)
+    })
+    this.pickers.sb.addEventListener('click', (evt) => {
+      setSV(evt)
     })
 
     this.appendChild(this.pickers.hue)
     this.appendChild(this.pickers.sb)
   }
 
+  // calcValue() {
+  //   const hex = colorUtils.hsvToHex({h: this.state.hue, s: this.state.saturation, b: this.state.brightness})
+  //   this.value = hex
+  //   const inputEvent = new InputEvent('input', {
+  //     bubbles: true,
+  //     cancelable: false,
+  //     data: hex,
+  //   })
+  //   this.dispatchEvent(inputEvent)
+  // }
+
   drawHuePicker() {
     
-    if ( this.state.hueType === 'linear' && this.state.hueDirection == 'horizontal' ) {
-      this.pickers.hue.width = this.state.hueLength
-      this.pickers.hue.height = this.state.hueThickness
+    if ( this.option.hueType === 'linear' && this.option.hueDirection == 'horizontal' ) {
+      this.pickers.hue.width = this.option.hueLength
+      this.pickers.hue.height = this.option.hueThickness
     }
     else {
       // TODO
@@ -313,31 +335,40 @@ export class HSVPicker extends HTMLElement {
     hueGrad.addColorStop(6 / 6, '#ff0000')
 
     hueCTX.fillStyle = hueGrad
-    hueCTX.fillRect(0, 0, this.state.hueLength, this.state.hueThickness)
+    hueCTX.fillRect(0, 0, this.option.hueLength, this.option.hueThickness)
   }
 
   drawSBPicker() {
 
-    if ( this.state.sbCombine ) {
-      this.pickers.sb.width = this.state.sbWidth
-      this.pickers.sb.height = this.state.sbHeight
+    // this.pickers.sb.style = 'border: 1px solid grey;'
+
+    if ( this.option.sbCombine ) {
+      this.pickers.sb.width = this.option.sbWidth
+      this.pickers.sb.height = this.option.sbHeight
     }
 
     const sbCTX = this.pickers.sb.getContext('2d', { willReadFrequently: true })
-    sbCTX.clearRect(0, 0, this.state.sbWidth, this.state.sbHeight)
+    sbCTX.clearRect(0, 0, this.option.sbWidth, this.option.sbHeight)
     sbCTX.globalCompositeOperation = 'multiply'
 
-    const colorGrad = sbCTX.createLinearGradient(0, 0, this.state.sbWidth, 0)
-    colorGrad.addColorStop(0, "white")
+    const colorGrad = sbCTX.createLinearGradient(0, 0, this.option.sbWidth, 0)
+    colorGrad.addColorStop(0.05, "white")
     colorGrad.addColorStop(1, colorUtils.hsvToHex({ h: this.state.hue, s: 1, v: 1 }))
     sbCTX.fillStyle = colorGrad
-    sbCTX.fillRect(0, 0, this.state.sbWidth, this.state.sbHeight)
+    sbCTX.fillRect(0, 0, this.option.sbWidth, this.option.sbHeight)
 
-    const blackGrad = sbCTX.createLinearGradient(0, 0, 0, this.state.sbHeight)
+    const blackGrad = sbCTX.createLinearGradient(0, 0, 0, this.option.sbHeight)
     blackGrad.addColorStop(0.1, "white")
     blackGrad.addColorStop(1, "black")
     sbCTX.fillStyle = blackGrad
-    sbCTX.fillRect(0, 0, this.state.sbWidth, this.state.sbHeight)
+    sbCTX.fillRect(0, 0, this.option.sbWidth, this.option.sbHeight)
 
   }
 }
+
+// TODO
+// 주석좀 달자
+// 인디케이터
+// 초기값 랜덤
+// 휴 변경시에도 값 업데이트
+// sv 하얀색 선택할 떄 000000 이 되는 현상
