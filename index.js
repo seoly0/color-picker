@@ -140,6 +140,8 @@ export class HSVPicker extends HTMLElement {
 
     // 설정값
     this.option = {
+      sbCombine: false,
+
       indicator: {
         type: 'circle',
         size: 20,
@@ -182,9 +184,14 @@ export class HSVPicker extends HTMLElement {
     this.initContainer()
     this.initIndicators()
     this.initCanvas()
+
     this.drawHuePicker()
     if ( this.option.sbCombine ) {
       this.drawSBPicker()
+    }
+    else {
+      this.drawSaturationPicker()
+      this.drawBrightnessPicker()
     }
   }
 
@@ -192,7 +199,7 @@ export class HSVPicker extends HTMLElement {
 
     this.option.hueDirection = this.getAttribute('hue-direction') ?? 'horizontal'
     this.option.hueType = this.getAttribute('hue-type') ?? 'linear'
-    this.option.sbCombine = this.hasAttribute('sb-combine')
+    this.option.sbCombine = this.hasAttribute('sv-combine')
 
     if ( this.option.hueType === 'linear' ) {
       this.option.hueLength = valueUtils.toInt(this.getAttribute('hue-length'), 200)
@@ -202,8 +209,8 @@ export class HSVPicker extends HTMLElement {
       // TODO
     }
     if ( this.option.sbCombine ) {
-      this.option.sbWidth = valueUtils.toInt(this.getAttribute('sb-width'), 200)
-      this.option.sbHeight = valueUtils.toInt(this.getAttribute('sb-height'), 200)
+      this.option.sbWidth = valueUtils.toInt(this.getAttribute('sv-width'), 200)
+      this.option.sbHeight = valueUtils.toInt(this.getAttribute('sv-height'), 200)
     }
   }
 
@@ -251,10 +258,16 @@ export class HSVPicker extends HTMLElement {
     this.appendChild(this.elems.hueContainer)
 
     // sb 컨테이너 초기화
-    this.elems.sbContainer = document.createElement('div')
-    this.elems.sbContainer.style.position = 'relative'
-    this.elems.sbContainer.style.lineHeight = 0
-    this.appendChild(this.elems.sbContainer)
+    if (this.option.sbCombine) {
+      this.elems.sbContainer = document.createElement('div')
+      this.elems.sbContainer.style.position = 'relative'
+      this.elems.sbContainer.style.lineHeight = 0
+      this.appendChild(this.elems.sbContainer)
+    }
+    // 
+    else {
+      // TODO
+    }
   }
 
   setHue(X, Y) {
@@ -288,8 +301,6 @@ export class HSVPicker extends HTMLElement {
     this.drawSBPicker()
   }
 
-  
-
   setSB(X, Y) {
     const rect = this.elems.sbCanvas.getBoundingClientRect()
 
@@ -318,6 +329,7 @@ export class HSVPicker extends HTMLElement {
 
   initCanvas() {
     
+    // Init hue canvas
     this.elems.hueCanvas = document.createElement('canvas')
     this.elems.hueCanvas.addEventListener('mousedown', (evt) => {
       this.setHue(evt.clientX, evt.clientY)
@@ -330,27 +342,35 @@ export class HSVPicker extends HTMLElement {
     })
     this.elems.hueContainer.appendChild(this.elems.hueCanvas)
 
-    this.elems.sbCanvas = document.createElement('canvas')
-    this.elems.sbCanvas.addEventListener('mousedown', (evt) => {
-      this.setSB(evt.clientX, evt.clientY)
-      this.state.sbSelect = true
-      this.elems.sbDragArea.style.display = 'block'
-    })
-    this.elems.sbCanvas.addEventListener('mouseup', (evt) => {
-      this.state.sbSelect = false
-      this.elems.sbDragArea.style.display = 'none'
-    })
-    this.elems.sbContainer.appendChild(this.elems.sbCanvas)
+    // Init sb combine canvas
+    if (this.option.sbCombine) {
+      this.elems.sbCanvas = document.createElement('canvas')
+      this.elems.sbCanvas.addEventListener('mousedown', (evt) => {
+        this.setSB(evt.clientX, evt.clientY)
+        this.state.sbSelect = true
+        this.elems.sbDragArea.style.display = 'block'
+      })
+      this.elems.sbCanvas.addEventListener('mouseup', (evt) => {
+        this.state.sbSelect = false
+        this.elems.sbDragArea.style.display = 'none'
+      })
+      this.elems.sbContainer.appendChild(this.elems.sbCanvas)
+    }
+    // Init sb canvas
+    else {
+      // TODO
+    }
   }
 
   initIndicators() {
     
+    // Init hue indicator
     this.elems.hueIndicator = document.createElement('div')
     this.elems.hueIndicator.style.position = 'absolute'
     this.elems.hueIndicator.style.zIndex = 1
     this.elems.hueIndicator.style.width = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
     this.elems.hueIndicator.style.height = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
-    this.elems.hueIndicator.style.border = `${this.option.indicator.border.thickness}px solid white`
+    this.elems.hueIndicator.style.border = `${this.option.indicator.border.thickness}px solid ${this.option.indicator.border.color}`
     this.elems.hueIndicator.style.borderRadius = '50%'
     this.elems.hueIndicator.style.top = `${(this.option.hueThickness - this.option.indicator.size) / 2}px`
     this.elems.hueDragArea = document.createElement('div')
@@ -363,7 +383,6 @@ export class HSVPicker extends HTMLElement {
     this.elems.hueDragArea.style.display = 'none'
     this.elems.hueIndicator.appendChild(this.elems.hueDragArea)
     this.drawHueIndicator()
-
     this.elems.hueIndicator.addEventListener('mousedown', (evt) => {
       this.state.hueSelect = true
       this.elems.hueDragArea.style.display = 'block'
@@ -375,40 +394,63 @@ export class HSVPicker extends HTMLElement {
     this.elems.hueIndicator.addEventListener('mousemove', (evt) => {
       if (this.state.hueSelect) this.setHue(evt.clientX, evt.clientY)
     })
-
     this.elems.hueContainer.appendChild(this.elems.hueIndicator)
 
-    this.elems.sbIndicator = document.createElement('div')
-    this.elems.sbIndicator.style.position = 'absolute'
-    this.elems.sbIndicator.style.zIndex = 1
-    this.elems.sbIndicator.style.width = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
-    this.elems.sbIndicator.style.height = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
-    this.elems.sbIndicator.style.border = `${this.option.indicator.border.thickness}px solid white`
-    this.elems.sbIndicator.style.borderRadius = '50%'
-    this.elems.sbDragArea = document.createElement('div')
-    this.elems.sbDragArea.style.position = 'fixed'
-    this.elems.sbDragArea.style.width = '100%'
-    this.elems.sbDragArea.style.height = '100%'
-    this.elems.sbDragArea.style.top = 0
-    this.elems.sbDragArea.style.left = 0
-    this.elems.sbDragArea.style.zIndex = 1
-    this.elems.sbDragArea.style.display = 'none'
-    this.elems.sbIndicator.appendChild(this.elems.sbDragArea)
-    this.drawSBIndicator()
-
-    this.elems.sbIndicator.addEventListener('mousedown', (evt) => {
-      this.state.sbSelect = true
-      this.elems.sbDragArea.style.display = 'block'
-    })
-    this.elems.sbIndicator.addEventListener('mouseup', (evt) => {
-      this.state.sbSelect = false
+    // Init sb combine indicator
+    if (this.option.sbCombine) {
+      this.elems.sbIndicator = document.createElement('div')
+      this.elems.sbIndicator.style.position = 'absolute'
+      this.elems.sbIndicator.style.zIndex = 1
+      this.elems.sbIndicator.style.width = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
+      this.elems.sbIndicator.style.height = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
+      this.elems.sbIndicator.style.border = `${this.option.indicator.border.thickness}px solid ${this.option.indicator.border.color}`
+      this.elems.sbIndicator.style.borderRadius = '50%'
+      this.elems.sbDragArea = document.createElement('div')
+      this.elems.sbDragArea.style.position = 'fixed'
+      this.elems.sbDragArea.style.width = '100%'
+      this.elems.sbDragArea.style.height = '100%'
+      this.elems.sbDragArea.style.top = 0
+      this.elems.sbDragArea.style.left = 0
+      this.elems.sbDragArea.style.zIndex = 1
       this.elems.sbDragArea.style.display = 'none'
-    })
-    this.elems.sbIndicator.addEventListener('mousemove', (evt) => {
-      if (this.state.sbSelect) this.setSB(evt.clientX, evt.clientY)
-    })
+      this.elems.sbIndicator.appendChild(this.elems.sbDragArea)
+      this.drawSBIndicator()
+      this.elems.sbIndicator.addEventListener('mousedown', (evt) => {
+        this.state.sbSelect = true
+        this.elems.sbDragArea.style.display = 'block'
+      })
+      this.elems.sbIndicator.addEventListener('mouseup', (evt) => {
+        this.state.sbSelect = false
+        this.elems.sbDragArea.style.display = 'none'
+      })
+      this.elems.sbIndicator.addEventListener('mousemove', (evt) => {
+        if (this.state.sbSelect) this.setSB(evt.clientX, evt.clientY)
+      })
+      this.elems.sbContainer.appendChild(this.elems.sbIndicator)
+    }
+    // Init sb indicator
+    else {
+      // TODO
+    }
+  }
 
-    this.elems.sbContainer.appendChild(this.elems.sbIndicator)
+  drawHueIndicator() {
+    this.elems.hueIndicator.style.left = `${this.state.huePosition - this.option.indicator.size / 2}px`
+    this.elems.hueIndicator.style.backgroundColor = this.state.hueHex
+  }
+
+  drawSBIndicator() {
+    this.elems.sbIndicator.style.left = `${this.state.saturationPosition - this.option.indicator.size / 2}px`
+    this.elems.sbIndicator.style.top = `${this.state.brightnessPosition - this.option.indicator.size / 2}px`
+    this.elems.sbIndicator.style.backgroundColor = this.value
+  }
+
+  drawSaturationIndicator() {
+    // TODO
+  }
+
+  drawBrightnessIndicator() {
+    // TODO
   }
 
   drawHuePicker() {
@@ -436,15 +478,12 @@ export class HSVPicker extends HTMLElement {
     hueCTX.fillRect(0, 0, this.option.hueLength, this.option.hueThickness)
   }
 
-  drawHueIndicator() {
-    this.elems.hueIndicator.style.left = `${this.state.huePosition - this.option.indicator.size / 2}px`
-    this.elems.hueIndicator.style.backgroundColor = this.state.hueHex
+  drawSaturationPicker() {
+    // TODO
   }
 
-  drawSBIndicator() {
-    this.elems.sbIndicator.style.left = `${this.state.saturationPosition - this.option.indicator.size / 2}px`
-    this.elems.sbIndicator.style.top = `${this.state.brightnessPosition - this.option.indicator.size / 2}px`
-    this.elems.sbIndicator.style.backgroundColor = this.value
+  drawBrightnessPicker() {
+    // TODO
   }
 
   drawSBPicker() {
