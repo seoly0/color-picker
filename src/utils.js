@@ -1,5 +1,4 @@
-
-const colorUtils = {
+export const colorUtils = {
 
   isHex(color) {
     return /^#([0-9a-fA-F]{3}){1,2}$/i.test(color)
@@ -116,4 +115,16 @@ const colorUtils = {
 
       return '#' + toHex(r) + toHex(g) + toHex(b)
     },
+}
+
+export const valueUtils = {
+  toInt: (val, _default) => parseInt(val, 10) || _default,
+  // isTruthy: (val) => !!val,
+  // isFalsy: (val) => !isTruthy(val),
+  // isEmpty: (val) => val,
+  // isArray: (val) => val,
+  // isObject: (val) => val,
+  // isFunction: (val) => val,
+  // isIn: (val, set) => true,
+  // range: (start, len) => Array()
 }

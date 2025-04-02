@@ -1,137 +1,4 @@
-// const template = await load('./template.html')
-// console.log(template.getElementById('mytemplate'))
-
-
-const colorUtils = {
-
-  isHex(color) {
-    return /^#([0-9a-fA-F]{3}){1,2}$/i.test(color)
-  },
-
-  nameToRgb() {
-
-  },
-
-  nameToHex() {
-
-  },
-
-  rgbToHex(r, g, b) {
-    if (r > 255 || g > 255 || b > 255) throw "Invalid color component"
-    return ((r << 16) | (g << 8) | b).toString(16)
-  },
-
-  rgbToHsv(rgb) {
-
-  },
-
-  rgbToHsl(r, g, b) {
-    r /= 255, g /= 255, b /= 255
-    var max = Math.max(r, g, b), min = Math.min(r, g, b)
-    var h, s, l = (max + min) / 2
-
-    if(max == min){
-        h = s = 0 // achromatic
-    }else{
-        var d = max - min
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
-        switch(max){
-          case r: h = (g - b) / d + (g < b ? 6 : 0)
-            break
-          case g: h = (b - r) / d + 2
-            break
-          case b: h = (r - g) / d + 4
-            break
-        }
-        h /= 6
-    }
-
-    return [h, s, l]
-  },
-
-  hexToRgb() {
-
-  },
-
-  hexToHsv(hex) {
-    const r = parseInt(hex.substring(1, 3), 16) / 255
-    const g = parseInt(hex.substring(3, 5), 16) / 255
-    const b = parseInt(hex.substring(5, 7), 16) / 255
-
-    const max = Math.max(r, g, b)
-    const min = Math.min(r, g, b)
-
-    let h
-    if (max === min) {
-        h = 0
-    } else if (max === r) {
-        h = 60 * (0 + (g - b) / (max - min))
-    } else if (max === g) {
-        h = 60 * (2 + (b - r) / (max - min))
-    } else if (max === b) {
-        h = 60 * (4 + (r - g) / (max - min))
-    }
-    if (h < 0) h += 360
-
-    const s = max === 0 ? 0 : (max - min) / max
-    const v = max
-
-    return { h, s, v }
-  },
-
-  hsvToHex(hsv) {
-      let r, g, b
-      let h = hsv.h / 360
-      let s = hsv.s
-      let v = hsv.v
-
-      let i = Math.floor(h * 6)
-      let f = h * 6 - i
-      let p = v * (1 - s)
-      let q = v * (1 - f * s)
-      let t = v * (1 - (1 - f) * s)
-
-      switch (i % 6) {
-        case 0:
-          (r = v), (g = t), (b = p)
-          break
-        case 1:
-          (r = q), (g = v), (b = p)
-          break
-        case 2:
-          (r = p), (g = v), (b = t)
-          break
-        case 3:
-          (r = p), (g = q), (b = v)
-          break
-        case 4:
-          (r = t), (g = p), (b = v)
-          break
-        case 5:
-          (r = v), (g = p), (b = q)
-          break
-      }
-
-      const toHex = x => {
-        const hex = Math.round(x * 255).toString(16)
-        return hex.length === 1 ? '0' + hex : hex
-      }
-
-      return '#' + toHex(r) + toHex(g) + toHex(b)
-    },
-}
-
-const valueUtils = {
-  toInt: (val, _default) => parseInt(val, 10) || _default,
-  // isTruthy: (val) => !!val,
-  // isFalsy: (val) => !isTruthy(val),
-  // isEmpty: (val) => val,
-  // isArray: (val) => val,
-  // isObject: (val) => val,
-  // isFunction: (val) => val,
-  // isIn: (val, set) => true,
-  // range: (start, len) => Array()
-}
+import { colorUtils, valueUtils } from './utils.js'
 
 export class HSVPicker extends HTMLElement {
 
@@ -168,7 +35,7 @@ export class HSVPicker extends HTMLElement {
     return ['value']
   }
 
-	attributeChangedCallback(attrName, oldVal, newVal) {
+    attributeChangedCallback(attrName, oldVal, newVal) {
 
     // if (attrName == 'value') {
     //   this.svSelector.style.background = this.drawSVSelectorCSS(newVal)
@@ -223,18 +90,17 @@ export class HSVPicker extends HTMLElement {
       this.state.saturation = s
       this.state.brightness = v
 
-      // TODO
-      this.state.hueHex = '#000000'
+      console.log(h,s,v)
+
+      this.state.hueHex = colorUtils.hsvToHex({ h, s: 1, v: 1 })
+
+      this.state.huePosition = h / 360 * this.option.hueLength
+      this.state.saturationPosition = s * this.option.sbWidth
+      this.state.brightnessPosition = (1 - v) * this.option.sbHeight
     }
     else {
       // TODO
     }
-
-    // TODO
-    // 인디케이터용
-    this.state.huePosition = 0
-    this.state.saturationPosition = 0
-    this.state.brightnessPosition = 0
   }
 
   dispatch() {
@@ -372,6 +238,7 @@ export class HSVPicker extends HTMLElement {
     this.elems.hueIndicator.style.height = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
     this.elems.hueIndicator.style.border = `${this.option.indicator.border.thickness}px solid ${this.option.indicator.border.color}`
     this.elems.hueIndicator.style.borderRadius = '50%'
+    // this.elems.hueIndicator.style.backgroundColor
     this.elems.hueIndicator.style.top = `${(this.option.hueThickness - this.option.indicator.size) / 2}px`
     this.elems.hueDragArea = document.createElement('div')
     this.elems.hueDragArea.style.position = 'fixed'
