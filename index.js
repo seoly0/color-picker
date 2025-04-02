@@ -139,7 +139,16 @@ export class HSVPicker extends HTMLElement {
     super()
 
     // 설정값
-    this.option = {}
+    this.option = {
+      indicator: {
+        type: 'circle',
+        size: 20,
+        border: {
+          thickness: 2,
+          color: 'white',
+        }
+      }
+    }
 
     // 상태값
     this.state = {}
@@ -275,6 +284,7 @@ export class HSVPicker extends HTMLElement {
 
     this.dispatch()
     this.drawHueIndicator()
+    this.drawSBIndicator()
     this.drawSBPicker()
   }
 
@@ -302,20 +312,33 @@ export class HSVPicker extends HTMLElement {
     this.state.brightness = v
 
     this.dispatch()
+    this.drawHueIndicator()
     this.drawSBIndicator()
   }
 
   initCanvas() {
     
     this.elems.hueCanvas = document.createElement('canvas')
-    this.elems.hueCanvas.addEventListener('click', (evt) => {
+    this.elems.hueCanvas.addEventListener('mousedown', (evt) => {
       this.setHue(evt.clientX, evt.clientY)
+      this.state.hueSelect = true
+      this.elems.hueDragArea.style.display = 'block'
+    })
+    this.elems.hueCanvas.addEventListener('mouseup', (evt) => {
+      this.state.hueSelect = false
+      this.elems.hueDragArea.style.display = 'none'
     })
     this.elems.hueContainer.appendChild(this.elems.hueCanvas)
 
     this.elems.sbCanvas = document.createElement('canvas')
-    this.elems.sbCanvas.addEventListener('click', (evt) => {
+    this.elems.sbCanvas.addEventListener('mousedown', (evt) => {
       this.setSB(evt.clientX, evt.clientY)
+      this.state.sbSelect = true
+      this.elems.sbDragArea.style.display = 'block'
+    })
+    this.elems.sbCanvas.addEventListener('mouseup', (evt) => {
+      this.state.sbSelect = false
+      this.elems.sbDragArea.style.display = 'none'
     })
     this.elems.sbContainer.appendChild(this.elems.sbCanvas)
   }
@@ -324,17 +347,19 @@ export class HSVPicker extends HTMLElement {
     
     this.elems.hueIndicator = document.createElement('div')
     this.elems.hueIndicator.style.position = 'absolute'
-    this.elems.hueIndicator.style.width = '6px'
-    this.elems.hueIndicator.style.height = '6px'
-    this.elems.hueIndicator.style.border = '2px solid white'
+    this.elems.hueIndicator.style.zIndex = 1
+    this.elems.hueIndicator.style.width = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
+    this.elems.hueIndicator.style.height = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
+    this.elems.hueIndicator.style.border = `${this.option.indicator.border.thickness}px solid white`
     this.elems.hueIndicator.style.borderRadius = '50%'
-    this.elems.hueIndicator.style.top = 0
+    this.elems.hueIndicator.style.top = `${(this.option.hueThickness - this.option.indicator.size) / 2}px`
     this.elems.hueDragArea = document.createElement('div')
     this.elems.hueDragArea.style.position = 'fixed'
     this.elems.hueDragArea.style.width = '100%'
     this.elems.hueDragArea.style.height = '100%'
     this.elems.hueDragArea.style.top = 0
     this.elems.hueDragArea.style.left = 0
+    this.elems.hueDragArea.style.zIndex = 1
     this.elems.hueDragArea.style.display = 'none'
     this.elems.hueIndicator.appendChild(this.elems.hueDragArea)
     this.drawHueIndicator()
@@ -347,9 +372,6 @@ export class HSVPicker extends HTMLElement {
       this.state.hueSelect = false
       this.elems.hueDragArea.style.display = 'none'
     })
-    // this.elems.hueIndicator.addEventListener('mouseleave', (evt) => {
-    //   this.state.hueSelect = false
-    // })
     this.elems.hueIndicator.addEventListener('mousemove', (evt) => {
       if (this.state.hueSelect) this.setHue(evt.clientX, evt.clientY)
     })
@@ -358,9 +380,10 @@ export class HSVPicker extends HTMLElement {
 
     this.elems.sbIndicator = document.createElement('div')
     this.elems.sbIndicator.style.position = 'absolute'
-    this.elems.sbIndicator.style.width = '6px'
-    this.elems.sbIndicator.style.height = '6px'
-    this.elems.sbIndicator.style.border = '2px solid white'
+    this.elems.sbIndicator.style.zIndex = 1
+    this.elems.sbIndicator.style.width = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
+    this.elems.sbIndicator.style.height = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
+    this.elems.sbIndicator.style.border = `${this.option.indicator.border.thickness}px solid white`
     this.elems.sbIndicator.style.borderRadius = '50%'
     this.elems.sbDragArea = document.createElement('div')
     this.elems.sbDragArea.style.position = 'fixed'
@@ -368,6 +391,7 @@ export class HSVPicker extends HTMLElement {
     this.elems.sbDragArea.style.height = '100%'
     this.elems.sbDragArea.style.top = 0
     this.elems.sbDragArea.style.left = 0
+    this.elems.sbDragArea.style.zIndex = 1
     this.elems.sbDragArea.style.display = 'none'
     this.elems.sbIndicator.appendChild(this.elems.sbDragArea)
     this.drawSBIndicator()
@@ -380,9 +404,6 @@ export class HSVPicker extends HTMLElement {
       this.state.sbSelect = false
       this.elems.sbDragArea.style.display = 'none'
     })
-    // this.elems.sbIndicator.addEventListener('mouseleave', (evt) => {
-    //   this.state.sbSelect = false
-    // })
     this.elems.sbIndicator.addEventListener('mousemove', (evt) => {
       if (this.state.sbSelect) this.setSB(evt.clientX, evt.clientY)
     })
@@ -416,19 +437,17 @@ export class HSVPicker extends HTMLElement {
   }
 
   drawHueIndicator() {
-    this.elems.hueIndicator.style.left = `${this.state.huePosition - 5}px`
+    this.elems.hueIndicator.style.left = `${this.state.huePosition - this.option.indicator.size / 2}px`
     this.elems.hueIndicator.style.backgroundColor = this.state.hueHex
   }
 
   drawSBIndicator() {
-    this.elems.sbIndicator.style.left = `${this.state.saturationPosition - 5}px`
-    this.elems.sbIndicator.style.top = `${this.state.brightnessPosition - 5}px`
+    this.elems.sbIndicator.style.left = `${this.state.saturationPosition - this.option.indicator.size / 2}px`
+    this.elems.sbIndicator.style.top = `${this.state.brightnessPosition - this.option.indicator.size / 2}px`
     this.elems.sbIndicator.style.backgroundColor = this.value
   }
 
   drawSBPicker() {
-
-    // this.elems.sbCanvas.style = 'border: 1px solid grey;'
 
     if ( this.option.sbCombine ) {
       this.elems.sbCanvas.width = this.option.sbWidth
@@ -456,5 +475,4 @@ export class HSVPicker extends HTMLElement {
 
 // TODO
 // 주석좀 달자
-// 인디케이터
 // 초기값 랜덤
