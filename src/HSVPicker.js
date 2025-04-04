@@ -238,8 +238,6 @@ export class HSVPicker extends HTMLElement {
     this.elems.hueIndicator.style.height = `${this.option.indicator.size - this.option.indicator.border.thickness * 2}px`
     this.elems.hueIndicator.style.border = `${this.option.indicator.border.thickness}px solid ${this.option.indicator.border.color}`
     this.elems.hueIndicator.style.borderRadius = '50%'
-    // this.elems.hueIndicator.style.backgroundColor
-    this.elems.hueIndicator.style.top = `${(this.option.hueThickness - this.option.indicator.size) / 2}px`
     this.elems.hueDragArea = document.createElement('div')
     this.elems.hueDragArea.style.position = 'fixed'
     this.elems.hueDragArea.style.width = '100%'
@@ -302,7 +300,19 @@ export class HSVPicker extends HTMLElement {
   }
 
   drawHueIndicator() {
-    this.elems.hueIndicator.style.left = `${this.state.huePosition - this.option.indicator.size / 2}px`
+    if ( this.option.hueType === 'linear' ) {
+      if ( this.option.hueDirection == 'horizontal' ) {
+        this.elems.hueIndicator.style.left = `${this.state.huePosition - this.option.indicator.size / 2}px`
+        this.elems.hueIndicator.style.top = `${(this.option.hueThickness - this.option.indicator.size) / 2}px`
+      }
+      else if ( this.option.hueDirection == 'vertical') {
+        this.elems.hueIndicator.style.left = `${(this.option.hueThickness - this.option.indicator.size) / 2}px`
+        this.elems.hueIndicator.style.top = `${this.state.huePosition - this.option.indicator.size / 2}px`
+      }
+    }
+    else if ( this.option.hueType === 'circular' ) {
+      // TODO
+    }
     this.elems.hueIndicator.style.backgroundColor = this.state.hueHex
   }
 
@@ -321,28 +331,51 @@ export class HSVPicker extends HTMLElement {
   }
 
   drawHuePicker() {
+    // 선형
+    if ( this.option.hueType === 'linear' ) {
+      // 수평
+      if ( this.option.hueDirection == 'horizontal' ) {
+        this.elems.hueCanvas.width = this.option.hueLength
+        this.elems.hueCanvas.height = this.option.hueThickness
+
+        const hueCTX = this.elems.hueCanvas.getContext('2d', { willReadFrequently: true })
+        
+        const hueGrad = hueCTX.createLinearGradient(0, 0, this.option.hueLength, 0)
+        hueGrad.addColorStop(0 / 6, '#ff0000')
+        hueGrad.addColorStop(1 / 6, '#ffff00')
+        hueGrad.addColorStop(2 / 6, '#00ff00')
+        hueGrad.addColorStop(3 / 6, '#00ffff')
+        hueGrad.addColorStop(4 / 6, '#0000ff')
+        hueGrad.addColorStop(5 / 6, '#ff00ff')
+        hueGrad.addColorStop(6 / 6, '#ff0000')
     
-    if ( this.option.hueType === 'linear' && this.option.hueDirection == 'horizontal' ) {
-      this.elems.hueCanvas.width = this.option.hueLength
-      this.elems.hueCanvas.height = this.option.hueThickness
+        hueCTX.fillStyle = hueGrad
+        hueCTX.fillRect(0, 0, this.option.hueLength, this.option.hueThickness)
+      }
+      // 수직
+      else if ( this.option.hueDirection == 'vertical' ) {
+        this.elems.hueCanvas.width = this.option.hueThickness
+        this.elems.hueCanvas.height = this.option.hueLength
+
+        const hueCTX = this.elems.hueCanvas.getContext('2d', { willReadFrequently: true })
+        
+        const hueGrad = hueCTX.createLinearGradient(0, 0, 0, this.option.hueLength)
+        hueGrad.addColorStop(0 / 6, '#ff0000')
+        hueGrad.addColorStop(1 / 6, '#ffff00')
+        hueGrad.addColorStop(2 / 6, '#00ff00')
+        hueGrad.addColorStop(3 / 6, '#00ffff')
+        hueGrad.addColorStop(4 / 6, '#0000ff')
+        hueGrad.addColorStop(5 / 6, '#ff00ff')
+        hueGrad.addColorStop(6 / 6, '#ff0000')
+    
+        hueCTX.fillStyle = hueGrad
+        hueCTX.fillRect(0, 0,  this.option.hueThickness, this.option.hueLength)
+      }
     }
-    else {
+    // 원형
+    else if ( this.option.hueType === 'circular' ) {
       // TODO
     }
-
-    const hueCTX = this.elems.hueCanvas.getContext('2d', { willReadFrequently: true })
-    
-    const hueGrad = hueCTX.createLinearGradient(0, 0, 200, 0)
-    hueGrad.addColorStop(0 / 6, '#ff0000')
-    hueGrad.addColorStop(1 / 6, '#ffff00')
-    hueGrad.addColorStop(2 / 6, '#00ff00')
-    hueGrad.addColorStop(3 / 6, '#00ffff')
-    hueGrad.addColorStop(4 / 6, '#0000ff')
-    hueGrad.addColorStop(5 / 6, '#ff00ff')
-    hueGrad.addColorStop(6 / 6, '#ff0000')
-
-    hueCTX.fillStyle = hueGrad
-    hueCTX.fillRect(0, 0, this.option.hueLength, this.option.hueThickness)
   }
 
   drawSaturationPicker() {
