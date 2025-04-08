@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+
+  <!-- sb-square -->
+  <hsv-picker 
+    id="picker"
+    value="#12d05f"
+
+    hue-type="linear"
+    hue-direction="horizontal"
+    hue-length="200"
+    hue-thickness="10"
+
+    saturation-picker-direction="horizontal"
+    saturation-picker-length="200"
+    saturation-picker-thickness="10"
+
+    brightness-picker-direction="horizontal"
+    brightness-picker-length="200"
+    brightness-picker-thickness="10"
+  ></hsv-picker>
+</body>
+
+<script type="module">
+import { HSVPicker } from './dist/color-picker.js'
+
+customElements.define('hsv-picker', HSVPicker)
+
+document.getElementById('picker').addEventListener('input', (evt) => {
+  // console.log(evt, evt.target.value, evt.data)
+  console.log(evt.data)
+})
+</script>
+</html>
