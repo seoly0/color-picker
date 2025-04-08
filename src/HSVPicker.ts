@@ -1,6 +1,12 @@
-import { colorUtils, valueUtils } from './utils.js'
+// @ts-nocheck
+
+import { colorUtils, valueUtils } from './utils'
 
 export class HSVPicker extends HTMLElement {
+  
+  option
+  state
+  elems
 
   constructor() {
     super()
