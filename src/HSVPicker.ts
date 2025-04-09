@@ -2,6 +2,13 @@
 
 import { colorUtils, valueUtils } from './utils'
 
+export class TestComponent extends HTMLElement {
+  attributeChangedCallback(attrName, oldVal, newVal) {
+  }
+  connectedCallback() {
+  }
+}
+
 export class HSVPicker extends HTMLElement {
   
   option
