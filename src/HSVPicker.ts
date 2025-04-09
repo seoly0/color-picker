@@ -113,6 +113,7 @@ export class HSVPicker extends HTMLElement {
   }
 
   connectedCallback() {
+    console.log('hello?')
     this.value = this.getAttribute('value') ?? 'red'
     if ( !!!CSS.supports('color', this.value) ) throw Error(`init value is not valid: ${this.value}`)
     
