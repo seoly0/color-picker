@@ -90,12 +90,6 @@ const a = {
   }
 };
 class C extends HTMLElement {
-  attributeChangedCallback(o, t, e) {
-  }
-  connectedCallback() {
-  }
-}
-class I extends HTMLElement {
   constructor() {
     super();
     g(this, "option");
@@ -176,7 +170,7 @@ class I extends HTMLElement {
         width: 100,
         height: 100
       }
-    }, this.state = {}, this.elems = {}, this.actions = {}, this.style.position = "relative";
+    }, this.state = {}, this.elems = {}, this.actions = {};
   }
   static get observedAttributes() {
     return ["value"];
@@ -184,7 +178,7 @@ class I extends HTMLElement {
   attributeChangedCallback(t, e, i) {
   }
   connectedCallback() {
-    if (console.log("hello?"), this.value = this.getAttribute("value") ?? "red", !CSS.supports("color", this.value)) throw Error(`init value is not valid: ${this.value}`);
+    if (this.style.position = "relative", this.value = this.getAttribute("value") ?? "red", !CSS.supports("color", this.value)) throw Error(`init value is not valid: ${this.value}`);
     this.initOption(), this.initState(), this.initContainer(), this.initSelectedColor(), this.initIndicators(), this.initCanvas(), this.drawHuePicker(), this.option.sbSquare ? this.drawSBPicker() : (this.drawSaturationPicker(), this.drawBrightnessPicker());
   }
   initOption() {
@@ -341,6 +335,5 @@ class I extends HTMLElement {
   }
 }
 export {
-  I as HSVPicker,
-  C as TestComponent
+  C as HSVPicker
 };

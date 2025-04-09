@@ -2,13 +2,6 @@
 
 import { colorUtils, valueUtils } from './utils'
 
-export class TestComponent extends HTMLElement {
-  attributeChangedCallback(attrName, oldVal, newVal) {
-  }
-  connectedCallback() {
-  }
-}
-
 export class HSVPicker extends HTMLElement {
   
   option
@@ -106,7 +99,6 @@ export class HSVPicker extends HTMLElement {
     // ?? 
     this.actions = {}
 
-    this.style.position = 'relative'
   }
 
   static get observedAttributes() {
@@ -120,7 +112,8 @@ export class HSVPicker extends HTMLElement {
   }
 
   connectedCallback() {
-    console.log('hello?')
+    this.style.position = 'relative'
+
     this.value = this.getAttribute('value') ?? 'red'
     if ( !!!CSS.supports('color', this.value) ) throw Error(`init value is not valid: ${this.value}`)
     
