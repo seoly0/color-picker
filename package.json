@@ -7,7 +7,7 @@
   "files": ["dist", "LISENCE"],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build && tsc",
     "preview": "vite preview"
   },
   "devDependencies": {
