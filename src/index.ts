@@ -1,1 +1,1 @@
-export { HSVPicker } from './HSVPicker'
+export { HSVPicker, TestComponent } from './HSVPicker'
