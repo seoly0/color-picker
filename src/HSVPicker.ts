@@ -710,7 +710,3 @@ export class HSVPicker extends HTMLElement {
 
   }
 }
-
-// TODO
-// 주석좀 달자
-// 초기값 랜덤
