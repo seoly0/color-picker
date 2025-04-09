@@ -6,17 +6,10 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
   "files": ["dist", "LISENCE"],
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc",
-    "preview": "vite preview"
+    "build": "vite build && tsc"
   },
   "devDependencies": {
     "typescript": "~5.7.2",
