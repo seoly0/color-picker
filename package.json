@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
-  "files": ["dist", "LISENCE"],
+  "files": ["dist", "@types", "LISENCE"],
   "scripts": {
     "dev": "vite",
     "build": "vite build && tsc",
