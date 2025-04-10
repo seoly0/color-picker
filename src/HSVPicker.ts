@@ -709,5 +709,7 @@ export class HSVPicker extends HTMLElement {
     sbCTX.fillRect(0, 0, this.option.saturation.picker.length, this.option.brightness.picker.length)
 
   }
+  dummyMethod() {
+    console.log('hhhh')
+  }
 }
-// 
