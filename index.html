@@ -1,37 +1,51 @@
 <!DOCTYPE html>
 
 <html>
-
+<head>
+<style>
+* {
+  /* box-sizing: border-box; */
+}
+</style>
+</head>
 <body>
 
   <!-- sb-square -->
   <hsv-picker 
-    id="picker"
+    id="picker" 
     value="red"
 
-    hue-type="linear"
-    hue-direction="horizontal"
-    hue-length="200"
-    hue-thickness="10"
-
+    hue-picker-class="hue-picker"
+    hue-picker-type="linear"
+    hue-picker-direction="horizontal"
+    hue-picker-length="200"
+    hue-picker-thickness="10"
+    hue-indicator-class="hue-indicator"
+    
+    saturation-picker-class="saturation-picker"
     saturation-picker-direction="horizontal"
     saturation-picker-length="200"
     saturation-picker-thickness="10"
-
+    saturation-indicator-class="saturation-indicator"
+    
+    brightness-picker-class="brightness-picker"
     brightness-picker-direction="horizontal"
     brightness-picker-length="200"
     brightness-picker-thickness="10"
+    brightness-indicator-class="brightness-indicator"
   ></hsv-picker>
 </body>
 
+<script type="module" src="/src/index.ts"></script>
 <script type="module">
-import { HSVPicker } from './dist/index.js'
+  import { HSVPicker } from '/src'
 
-customElements.define('hsv-picker', HSVPicker)
+  customElements.define('hsv-picker', HSVPicker)
 
-document.getElementById('picker').addEventListener('input', (evt) => {
-  // console.log(evt, evt.target.value, evt.data)
-  console.log(evt.data)
-})
+  document.getElementById('picker').addEventListener('input', (evt) => {
+    // console.log(evt, evt.target.value, evt.data)
+    console.log(evt.data)
+  })
 </script>
+
 </html>
