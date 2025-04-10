@@ -2,11 +2,6 @@
 
 <html>
 <head>
-<style>
-* {
-  /* box-sizing: border-box; */
-}
-</style>
 </head>
 <body>
 
@@ -34,6 +29,33 @@
     brightness-picker-thickness="10"
     brightness-indicator-class="brightness-indicator"
   ></hsv-picker>
+
+  <br />
+
+  <hsv-picker 
+  id="picker2" 
+  value="DodgerBlue"
+  sb-square
+
+  hue-picker-class="hue-picker"
+  hue-picker-type="linear"
+  hue-picker-direction="horizontal"
+  hue-picker-length="200"
+  hue-picker-thickness="10"
+  hue-indicator-class="hue-indicator"
+  
+  saturation-picker-class="saturation-picker"
+  saturation-picker-direction="horizontal"
+  saturation-picker-length="200"
+  saturation-picker-thickness="10"
+  saturation-indicator-class="saturation-indicator"
+  
+  brightness-picker-class="brightness-picker"
+  brightness-picker-direction="horizontal"
+  brightness-picker-length="200"
+  brightness-picker-thickness="10"
+  brightness-indicator-class="brightness-indicator"
+></hsv-picker>
 </body>
 
 <script type="module" src="/src/index.ts"></script>
@@ -43,7 +65,9 @@
   customElements.define('hsv-picker', HSVPicker)
 
   document.getElementById('picker').addEventListener('input', (evt) => {
-    // console.log(evt, evt.target.value, evt.data)
+    console.log(evt.data)
+  })
+  document.getElementById('picker2').addEventListener('input', (evt) => {
     console.log(evt.data)
   })
 </script>
