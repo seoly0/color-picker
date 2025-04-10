@@ -333,15 +333,6 @@ class C extends HTMLElement {
     const i = t.createLinearGradient(0, 0, 0, this.option.brightness.picker.length);
     i.addColorStop(0.02, "white"), i.addColorStop(0.98, "black"), t.fillStyle = i, t.fillRect(0, 0, this.option.saturation.picker.length, this.option.brightness.picker.length);
   }
-  dummyMethod() {
-    console.log("hhhh");
-  }
-  dummyMethod2() {
-    console.log("hhhh");
-  }
-  dummyMethod3() {
-    console.log("hhhh");
-  }
 }
 export {
   C as HSVPicker
