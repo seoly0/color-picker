@@ -715,4 +715,7 @@ export class HSVPicker extends HTMLElement {
   dummyMethod2() {
     console.log('hhhh')
   }
+  dummyMethod3() {
+    console.log('hhhh')
+  }
 }
