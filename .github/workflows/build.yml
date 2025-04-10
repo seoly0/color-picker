@@ -9,7 +9,6 @@ on:
       - 'src/**'
       - 'vite.config.ts'
       - 'package.json'
-      - 'package-lock.json'
 
 jobs:
   build-and-commit:
@@ -28,7 +27,7 @@ jobs:
           node-version: '20'  # 프로젝트에 맞게 버전 조정
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build with Vite
         run: npm run build
