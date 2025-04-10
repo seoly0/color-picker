@@ -60,13 +60,13 @@ export const colorUtils = {
 
     let h: number
     if (max === min) {
-        h = 0
+      h = 0
     } else if (max === r) {
-        h = 60 * (0 + (g - b) / (max - min))
+      h = 60 * (0 + (g - b) / (max - min))
     } else if (max === g) {
-        h = 60 * (2 + (b - r) / (max - min))
+      h = 60 * (2 + (b - r) / (max - min))
     } else if (max === b) {
-        h = 60 * (4 + (r - g) / (max - min))
+      h = 60 * (4 + (r - g) / (max - min))
     }
     else {
       throw Error
@@ -120,7 +120,7 @@ export const colorUtils = {
     return '#' + toHex(r) + toHex(g) + toHex(b)
   },
 
-  hsvToHsl (hsv: any) {
+  hsvToHsl(hsv: any) {
 
     let h = hsv.h / 360
     let s = hsv.s
@@ -129,13 +129,13 @@ export const colorUtils = {
     let l = (2 - s) * v / 2
 
     if (l != 0) {
-        if (l == 1) {
-            s = 0
-        } else if (l < 0.5) {
-            s = s * v / (l * 2)
-        } else {
-            s = s * v / (2 - l * 2)
-        }
+      if (l == 1) {
+        s = 0
+      } else if (l < 0.5) {
+        s = s * v / (l * 2)
+      } else {
+        s = s * v / (2 - l * 2)
+      }
     }
 
     return { h, s, l }

@@ -34,6 +34,7 @@ export class HSVPicker extends HTMLElement {
 
       hue: {
         picker: {
+          class: '',
           type: 'linear',
           direction: 'horizontal', // lenear
           length: 0, // lenear
@@ -41,6 +42,7 @@ export class HSVPicker extends HTMLElement {
           radius: 0, // circular
         },
         indicator: {
+          class: '',
           type: 'circle',
           size: '',
           border: {
@@ -52,11 +54,13 @@ export class HSVPicker extends HTMLElement {
 
       saturation: {
         picker: {
+          class: '',
           direction: 'horizontal',
           length: 0,
           thickness: 0,
         },
         indicator: {
+          class: '',
           type: 'circle',
           size: '',
           border: {
@@ -68,11 +72,13 @@ export class HSVPicker extends HTMLElement {
 
       brightness: {
         picker: {
+          class: '',
           direction: 'horizontal',
           length: 0,
           thickness: 0,
         },
         indicator: {
+          class: '',
           type: 'circle',
           size: '',
           border: {
@@ -142,29 +148,35 @@ export class HSVPicker extends HTMLElement {
   initOption() {
     this.option.sbSquare = this.hasAttribute( 'sb-square' )
 
-    this.option.hue.picker.type = this.getAttribute( 'hue-picker-direction' ) ?? 'linear'
+    this.option.hue.picker.class = this.getAttribute( 'hue-picker-class' ) ?? 'hue-picker'
+    this.option.hue.picker.type = this.getAttribute( 'hue-picker-type' ) ?? 'linear'
     this.option.hue.picker.direction = this.getAttribute( 'hue-picker-direction' ) ?? 'horizontal'
     this.option.hue.picker.length = this.getAttribute( 'hue-picker-length' ) ?? 200
     this.option.hue.picker.thickness = this.getAttribute( 'hue-picker-thickness' ) ?? 10
     this.option.hue.picker.radius = this.getAttribute( 'hue-picker-thickness' ) ?? 100
     this.option.hue.indicator.type = this.getAttribute( 'hue-indicator-type' ) ?? 'circle'
     this.option.hue.indicator.size = this.getAttribute( 'hue-indicator-size' ) ?? 16
+    this.option.hue.indicator.class = this.getAttribute( 'hue-indicator-class' ) ?? 'hue-indicator'
     this.option.hue.indicator.border.color = this.getAttribute( 'hue-indicator-border-color' ) ?? 'white'
     this.option.hue.indicator.border.thickness = this.getAttribute( 'hue-indicator-border-thickness' ) ?? 2
 
+    this.option.saturation.picker.class = this.getAttribute( 'saturation-picker-class' ) ?? 'saturation-picker'
     this.option.saturation.picker.direction = this.getAttribute( 'saturation-picker-direction' ) ?? 'horizontal'
     this.option.saturation.picker.length = this.getAttribute( 'saturation-picker-length' ) ?? 200
     this.option.saturation.picker.thickness = this.getAttribute( 'saturation-picker-thickness' ) ?? 10
     this.option.saturation.indicator.type = this.getAttribute( 'saturation-indicator-type' ) ?? 'circle'
     this.option.saturation.indicator.size = this.getAttribute( 'saturation-indicator-size' ) ?? 16
+    this.option.saturation.indicator.class = this.getAttribute( 'saturation-indicator-class' ) ?? 'saturation-indicator'
     this.option.saturation.indicator.border.color = this.getAttribute( 'saturation-indicator-border-color' ) ?? 'white'
     this.option.saturation.indicator.border.thickness = this.getAttribute( 'saturation-indicator-border-thickness' ) ?? 2
 
+    this.option.brightness.picker.class = this.getAttribute( 'brightness-picker-class' ) ?? 'brightness-picker'
     this.option.brightness.picker.direction = this.getAttribute( 'brightness-picker-direction' ) ?? 'horizontal'
     this.option.brightness.picker.length = this.getAttribute( 'brightness-picker-length' ) ?? 200
     this.option.brightness.picker.thickness = this.getAttribute( 'brightness-picker-thickness' ) ?? 10
     this.option.brightness.indicator.type = this.getAttribute( 'brightness-indicator-type' ) ?? 'circle'
     this.option.brightness.indicator.size = this.getAttribute( 'brightness-indicator-size' ) ?? 16
+    this.option.brightness.indicator.class = this.getAttribute( 'brightness-indicator-class' ) ?? 'brightness-indicator'
     this.option.brightness.indicator.border.color = this.getAttribute( 'brightness-indicator-border-color' ) ?? 'white'
     this.option.brightness.indicator.border.thickness = this.getAttribute( 'brightness-indicator-border-thickness' ) ?? 2
   }
@@ -204,6 +216,7 @@ export class HSVPicker extends HTMLElement {
   initContainer() {
     // hue 컨테이너 초기화
     this.elems.hueContainer = document.createElement( 'div' )
+    this.elems.hueContainer.classList.add( this.option.hue.picker.class )
     this.elems.hueContainer.style.position = 'relative'
     this.elems.hueContainer.style.lineHeight = 0
     this.appendChild( this.elems.hueContainer )
@@ -211,6 +224,7 @@ export class HSVPicker extends HTMLElement {
     // sb 컨테이너 초기화
     if ( this.option.sbSquare ) {
       this.elems.sbContainer = document.createElement( 'div' )
+      // this.elems.sbContainer.classList.add( this.option.hue.picker.class )
       this.elems.sbContainer.style.position = 'relative'
       this.elems.sbContainer.style.lineHeight = 0
       this.appendChild( this.elems.sbContainer )
@@ -219,11 +233,13 @@ export class HSVPicker extends HTMLElement {
     else {
       // TODO
       this.elems.saturationContainer = document.createElement( 'div' )
+      this.elems.saturationContainer.classList.add( this.option.saturation.picker.class )
       this.elems.saturationContainer.style.position = 'relative'
       this.elems.saturationContainer.style.lineHeight = 0
       this.appendChild( this.elems.saturationContainer )
 
       this.elems.brightnessContainer = document.createElement( 'div' )
+      this.elems.brightnessContainer.classList.add( this.option.brightness.picker.class )
       this.elems.brightnessContainer.style.position = 'relative'
       this.elems.brightnessContainer.style.lineHeight = 0
       this.appendChild( this.elems.brightnessContainer )
@@ -424,10 +440,12 @@ export class HSVPicker extends HTMLElement {
   initIndicators() {
     // Init hue indicator
     this.elems.hueIndicator = document.createElement( 'div' )
+    this.elems.hueIndicator.classList.add( this.option.hue.indicator.class )
     this.elems.hueIndicator.style.position = 'absolute'
+    this.elems.hueIndicator.style.boxSizing = 'border-box'
     this.elems.hueIndicator.style.zIndex = 1
-    this.elems.hueIndicator.style.width = `${this.option.hue.indicator.size - this.option.hue.indicator.border.thickness * 2}px`
-    this.elems.hueIndicator.style.height = `${this.option.hue.indicator.size - this.option.hue.indicator.border.thickness * 2}px`
+    this.elems.hueIndicator.style.width = `${this.option.hue.indicator.size}px`
+    this.elems.hueIndicator.style.height = `${this.option.hue.indicator.size}px`
     this.elems.hueIndicator.style.border = `${this.option.hue.indicator.border.thickness}px solid ${this.option.hue.indicator.border.color}`
     this.elems.hueIndicator.style.borderRadius = '50%'
     this.elems.hueDragArea = document.createElement( 'div' )
@@ -462,10 +480,12 @@ export class HSVPicker extends HTMLElement {
     // Init sb square indicator
     if ( this.option.sbSquare ) {
       this.elems.sbIndicator = document.createElement( 'div' )
+      // this.elems.sbIndicator.classList.add( this.option.global.indicator.class )
       this.elems.sbIndicator.style.position = 'absolute'
+      this.elems.sbIndicator.style.boxSizing = 'border-box'
       this.elems.sbIndicator.style.zIndex = 1
-      this.elems.sbIndicator.style.width = `${this.option.global.indicator.size - this.option.global.indicator.border.thickness * 2}px`
-      this.elems.sbIndicator.style.height = `${this.option.global.indicator.size - this.option.global.indicator.border.thickness * 2}px`
+      this.elems.sbIndicator.style.width = `${this.option.global.indicator.size}px`
+      this.elems.sbIndicator.style.height = `${this.option.global.indicator.size}px`
       this.elems.sbIndicator.style.border = `${this.option.global.indicator.border.thickness}px solid ${this.option.global.indicator.border.color}`
       this.elems.sbIndicator.style.borderRadius = '50%'
       this.elems.sbDragArea = document.createElement( 'div' )
@@ -500,10 +520,12 @@ export class HSVPicker extends HTMLElement {
     else {
       // Init saturation indicator
       this.elems.saturationIndicator = document.createElement( 'div' )
+      this.elems.saturationIndicator.classList.add( this.option.saturation.indicator.class )
       this.elems.saturationIndicator.style.position = 'absolute'
+      this.elems.saturationIndicator.style.boxSizing = 'border-box'
       this.elems.saturationIndicator.style.zIndex = 1
-      this.elems.saturationIndicator.style.width = `${this.option.saturation.indicator.size - this.option.saturation.indicator.border.thickness * 2}px`
-      this.elems.saturationIndicator.style.height = `${this.option.saturation.indicator.size - this.option.saturation.indicator.border.thickness * 2}px`
+      this.elems.saturationIndicator.style.width = `${this.option.saturation.indicator.size}px`
+      this.elems.saturationIndicator.style.height = `${this.option.saturation.indicator.size}px`
       this.elems.saturationIndicator.style.border =
         `${this.option.saturation.indicator.border.thickness}px solid ${this.option.saturation.indicator.border.color}`
       this.elems.saturationIndicator.style.borderRadius = '50%'
@@ -538,10 +560,12 @@ export class HSVPicker extends HTMLElement {
 
       // Init brightness indicator
       this.elems.brightnessIndicator = document.createElement( 'div' )
+      this.elems.brightnessIndicator.classList.add( this.option.brightness.indicator.class )
       this.elems.brightnessIndicator.style.position = 'absolute'
+      this.elems.brightnessIndicator.style.boxSizing = 'border-box'
       this.elems.brightnessIndicator.style.zIndex = 1
-      this.elems.brightnessIndicator.style.width = `${this.option.brightness.indicator.size - this.option.brightness.indicator.border.thickness * 2}px`
-      this.elems.brightnessIndicator.style.height = `${this.option.brightness.indicator.size - this.option.brightness.indicator.border.thickness * 2}px`
+      this.elems.brightnessIndicator.style.width = `${this.option.brightness.indicator.size}px`
+      this.elems.brightnessIndicator.style.height = `${this.option.brightness.indicator.size}px`
       this.elems.brightnessIndicator.style.border =
         `${this.option.brightness.indicator.border.thickness}px solid ${this.option.brightness.indicator.border.color}`
       this.elems.brightnessIndicator.style.borderRadius = '50%'
