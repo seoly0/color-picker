@@ -76,6 +76,7 @@ export declare class HSVPicker extends HTMLElement {
     static get observedAttributes(): string[];
     attributeChangedCallback(attrName: any, oldVal: any, newVal: any): void;
     connectedCallback(): void;
+    standardize(str: string): string;
     initOption(): void;
     initState(): void;
     dispatch(): void;
