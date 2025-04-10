@@ -17,5 +17,6 @@ export declare const colorUtils: {
     };
 };
 export declare const valueUtils: {
-    toInt: (val: string, _default: number) => number;
+    assert: <T>(val: any, domains: Array<T>, _default?: T) => T;
+    toInt: (val: any, _default: number) => number;
 };

@@ -1,80 +1,11 @@
 export declare class HSVPicker extends HTMLElement {
-    option: {
-        valueType: string;
-        sbSquare: boolean;
-        global: {
-            picker: {
-                direction: string;
-                length: number;
-                thickness: number;
-            };
-            indicator: {
-                type: string;
-                size: number;
-                border: {
-                    thickness: number;
-                    color: string;
-                };
-            };
-        };
-        hue: {
-            picker: {
-                type: string;
-                direction: string;
-                length: number;
-                thickness: number;
-                radius: number;
-            };
-            indicator: {
-                type: string;
-                size: string;
-                border: {
-                    thickness: number;
-                    color: string;
-                };
-            };
-        };
-        saturation: {
-            picker: {
-                direction: string;
-                length: number;
-                thickness: number;
-            };
-            indicator: {
-                type: string;
-                size: string;
-                border: {
-                    thickness: number;
-                    color: string;
-                };
-            };
-        };
-        brightness: {
-            picker: {
-                direction: string;
-                length: number;
-                thickness: number;
-            };
-            indicator: {
-                type: string;
-                size: string;
-                border: {
-                    thickness: number;
-                    color: string;
-                };
-            };
-        };
-        selected: {
-            show: boolean;
-            width: number;
-            height: number;
-        };
-    };
-    state: {};
-    elems: {};
+    private readonly option;
+    private readonly state;
+    private readonly elems;
+    value: string;
     constructor();
     static get observedAttributes(): string[];
-    attributeChangedCallback(attrName: any, oldVal: any, newVal: any): void;
+    attributeChangedCallback(attrName: string, oldVal: any, newVal: any): void;
     connectedCallback(): void;
     standardize(str: string): string;
     initOption(): void;
@@ -83,10 +14,10 @@ export declare class HSVPicker extends HTMLElement {
     initContainer(): void;
     initSelectedColor(): void;
     drawSelectedColor(): void;
-    setHue(X: any, Y: any): void;
-    setSaturation(X: any, Y: any): void;
-    setBrightness(X: any, Y: any): void;
-    setSB(X: any, Y: any): void;
+    setHue(X: number, Y: number): void;
+    setSaturation(X: number, Y: number): void;
+    setBrightness(X: number, Y: number): void;
+    setSB(X: number, Y: number): void;
     initCanvas(): void;
     initIndicators(): void;
     drawHueIndicator(): void;
