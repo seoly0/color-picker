@@ -96,4 +96,7 @@ export declare class HSVPicker extends HTMLElement {
     drawSaturationPicker(): void;
     drawBrightnessPicker(): void;
     drawSBPicker(): void;
+    dummyMethod(): void;
+    dummyMethod2(): void;
+    dummyMethod3(): void;
 }
