@@ -12,7 +12,10 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist", "LISENCE"],
+  "files": [
+    "dist",
+    "LISENCE"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build && tsc"
