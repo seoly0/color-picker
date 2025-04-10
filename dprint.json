@@ -1,5 +1,5 @@
 {
-  "lineWidth": 160,
+  "lineWidth": 200,
   "typescript": {
     "semiColons": "asi",
     "spaceAround": true,
