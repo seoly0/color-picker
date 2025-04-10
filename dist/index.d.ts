@@ -1,1 +1,0 @@
-export { HSVPicker } from './HSVPicker';
