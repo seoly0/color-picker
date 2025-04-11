@@ -227,56 +227,6 @@ export class HSVPicker extends HTMLElement {
     this.dispatchEvent( inputEvent )
   }
 
-  initContainer() {
-    // hue 컨테이너 초기화
-    this.elems.hueContainer = document.createElement( 'div' )
-    this.elems.hueContainer.classList.add( this.option.hue.picker.class )
-    this.elems.hueContainer.style.position = 'relative'
-    this.elems.hueContainer.style.lineHeight = '0'
-    this.appendChild( this.elems.hueContainer )
-
-    // sb 컨테이너 초기화
-    if ( this.option.sbSquare ) {
-      this.elems.sbContainer = document.createElement( 'div' )
-      // this.elems.sbContainer.classList.add( this.option.hue.picker.class )
-      this.elems.sbContainer.style.position = 'relative'
-      this.elems.sbContainer.style.lineHeight = '0'
-      this.appendChild( this.elems.sbContainer )
-    }
-    //
-    else {
-      // TODO
-      this.elems.saturationContainer = document.createElement( 'div' )
-      this.elems.saturationContainer.classList.add( this.option.saturation.picker.class )
-      this.elems.saturationContainer.style.position = 'relative'
-      this.elems.saturationContainer.style.lineHeight = '0'
-      this.appendChild( this.elems.saturationContainer )
-
-      this.elems.brightnessContainer = document.createElement( 'div' )
-      this.elems.brightnessContainer.classList.add( this.option.brightness.picker.class )
-      this.elems.brightnessContainer.style.position = 'relative'
-      this.elems.brightnessContainer.style.lineHeight = '0'
-      this.appendChild( this.elems.brightnessContainer )
-    }
-  }
-
-  initSelectedColor() {
-    if ( this.option.selected.show ) {
-      this.elems.selectedColor = document.createElement( 'div' )
-      this.elems.selectedColor.style.position = 'relative'
-      this.elems.selectedColor.style.width = `${this.option.selected.width}px`
-      this.elems.selectedColor.style.height = `${this.option.selected.height}px`
-      this.elems.selectedColor.style.backgroundColor = this.value
-      this.appendChild( this.elems.selectedColor )
-    }
-  }
-
-  drawSelectedColor() {
-    if ( this.option.selected.show ) {
-      this.elems.selectedColor!!.style.backgroundColor = this.value
-    }
-  }
-
   setHue( X: number, Y: number ) {
     const rect = this.elems.hueCanvas!!.getBoundingClientRect()
 
@@ -394,8 +344,51 @@ export class HSVPicker extends HTMLElement {
     this.drawSelectedColor()
   }
 
-  initCanvas() {
-    // Init hue canvas
+  initHueContainer() {
+    this.elems.hueContainer = document.createElement( 'div' )
+    this.elems.hueContainer.classList.add( this.option.hue.picker.class )
+    this.elems.hueContainer.style.position = 'relative'
+    this.elems.hueContainer.style.lineHeight = '0'
+    this.appendChild( this.elems.hueContainer )
+  }
+
+  initSbContainer() {
+    this.elems.sbContainer = document.createElement( 'div' )
+    // this.elems.sbContainer.classList.add( this.option.common.picker.class )
+    this.elems.sbContainer.style.position = 'relative'
+    this.elems.sbContainer.style.lineHeight = '0'
+    this.appendChild( this.elems.sbContainer )
+  }
+
+  initSaturationContainer() {
+    this.elems.saturationContainer = document.createElement( 'div' )
+    this.elems.saturationContainer.classList.add( this.option.saturation.picker.class )
+    this.elems.saturationContainer.style.position = 'relative'
+    this.elems.saturationContainer.style.lineHeight = '0'
+    this.appendChild( this.elems.saturationContainer )
+  }
+
+  initBrightnessContainer() {
+    this.elems.brightnessContainer = document.createElement( 'div' )
+    this.elems.brightnessContainer.classList.add( this.option.brightness.picker.class )
+    this.elems.brightnessContainer.style.position = 'relative'
+    this.elems.brightnessContainer.style.lineHeight = '0'
+    this.appendChild( this.elems.brightnessContainer )
+  }
+
+  initContainer() {
+    this.initHueContainer()
+
+    if ( this.option.sbSquare ) {
+      this.initSbContainer()
+    }
+    else {
+      this.initSaturationContainer()
+      this.initBrightnessContainer()
+    }
+  }
+
+  initHueCanvas() {
     this.elems.hueCanvas = document.createElement( 'canvas' )
     this.elems.hueCanvas.addEventListener( 'mousedown', ( evt ) => {
       this.setHue( evt.clientX, evt.clientY )
@@ -407,52 +400,63 @@ export class HSVPicker extends HTMLElement {
       this.elems.hueDragArea!!.style.display = 'none'
     } )
     this.elems.hueContainer!!.appendChild( this.elems.hueCanvas )
+  }
 
-    // Init sb combine canvas
+  initSbCanvas() {
+    this.elems.sbCanvas = document.createElement( 'canvas' )
+    this.elems.sbCanvas.addEventListener( 'mousedown', ( evt ) => {
+      this.setSB( evt.clientX, evt.clientY )
+      this.state.sbSelect = true
+      this.elems.sbDragArea!!.style.display = 'block'
+    } )
+    this.elems.sbCanvas.addEventListener( 'mouseup', ( evt ) => {
+      this.state.sbSelect = false
+      this.elems.sbDragArea!!.style.display = 'none'
+    } )
+    this.elems.sbContainer!!.appendChild( this.elems.sbCanvas )
+  }
+
+  initSaturationCanvas() {
+    this.elems.saturationCanvas = document.createElement( 'canvas' )
+    this.elems.saturationCanvas.addEventListener( 'mousedown', ( evt ) => {
+      this.setSaturation( evt.clientX, evt.clientY )
+      this.state.saturationSelect = true
+      this.elems.saturationDragArea!!.style.display = 'block'
+    } )
+    this.elems.saturationCanvas.addEventListener( 'mouseup', ( evt ) => {
+      this.state.saturationSelect = false
+      this.elems.saturationDragArea!!.style.display = 'none'
+    } )
+    this.elems.saturationContainer!!.appendChild( this.elems.saturationCanvas )
+  }
+
+  initBrightnessCanvas() {
+    this.elems.brightnessCanvas = document.createElement( 'canvas' )
+    this.elems.brightnessCanvas.addEventListener( 'mousedown', ( evt ) => {
+      this.setBrightness( evt.clientX, evt.clientY )
+      this.state.brightnessSelect = true
+      this.elems.brightnessDragArea!!.style.display = 'block'
+    } )
+    this.elems.brightnessCanvas.addEventListener( 'mouseup', ( evt ) => {
+      this.state.brightnessSelect = false
+      this.elems.brightnessDragArea!!.style.display = 'none'
+    } )
+    this.elems.brightnessContainer!!.appendChild( this.elems.brightnessCanvas )
+  }
+
+  initCanvas() {
+    this.initHueCanvas()
+
     if ( this.option.sbSquare ) {
-      this.elems.sbCanvas = document.createElement( 'canvas' )
-      this.elems.sbCanvas.addEventListener( 'mousedown', ( evt ) => {
-        this.setSB( evt.clientX, evt.clientY )
-        this.state.sbSelect = true
-        this.elems.sbDragArea!!.style.display = 'block'
-      } )
-      this.elems.sbCanvas.addEventListener( 'mouseup', ( evt ) => {
-        this.state.sbSelect = false
-        this.elems.sbDragArea!!.style.display = 'none'
-      } )
-      this.elems.sbContainer!!.appendChild( this.elems.sbCanvas )
+      this.initSbCanvas()
     }
-    // Init sb canvas
     else {
-      // TODO
-      this.elems.saturationCanvas = document.createElement( 'canvas' )
-      this.elems.saturationCanvas.addEventListener( 'mousedown', ( evt ) => {
-        this.setSaturation( evt.clientX, evt.clientY )
-        this.state.saturationSelect = true
-        this.elems.saturationDragArea!!.style.display = 'block'
-      } )
-      this.elems.saturationCanvas.addEventListener( 'mouseup', ( evt ) => {
-        this.state.saturationSelect = false
-        this.elems.saturationDragArea!!.style.display = 'none'
-      } )
-      this.elems.saturationContainer!!.appendChild( this.elems.saturationCanvas )
-
-      this.elems.brightnessCanvas = document.createElement( 'canvas' )
-      this.elems.brightnessCanvas.addEventListener( 'mousedown', ( evt ) => {
-        this.setBrightness( evt.clientX, evt.clientY )
-        this.state.brightnessSelect = true
-        this.elems.brightnessDragArea!!.style.display = 'block'
-      } )
-      this.elems.brightnessCanvas.addEventListener( 'mouseup', ( evt ) => {
-        this.state.brightnessSelect = false
-        this.elems.brightnessDragArea!!.style.display = 'none'
-      } )
-      this.elems.brightnessContainer!!.appendChild( this.elems.brightnessCanvas )
+      this.initSaturationCanvas()
+      this.initBrightnessCanvas()
     }
   }
 
-  initIndicators() {
-    // Init hue indicator
+  initHueIndicator() {
     this.elems.hueIndicator = document.createElement( 'div' )
     this.elems.hueIndicator.classList.add( this.option.hue.indicator.class )
     this.elems.hueIndicator.style.position = 'absolute'
@@ -490,125 +494,137 @@ export class HSVPicker extends HTMLElement {
       if ( this.state.hueSelect ) this.setHue( evt.clientX, evt.clientY )
     } )
     this.elems.hueContainer!!.appendChild( this.elems.hueIndicator )
+  }
 
-    // Init sb square indicator
+  initSbIndicator() {
+    this.elems.sbIndicator = document.createElement( 'div' )
+    // this.elems.sbIndicator.classList.add( this.option.common.indicator.class )
+    this.elems.sbIndicator.style.position = 'absolute'
+    this.elems.sbIndicator.style.boxSizing = 'border-box'
+    this.elems.sbIndicator.style.zIndex = '1'
+    this.elems.sbIndicator.style.width = `${this.option.common.indicator.size}px`
+    this.elems.sbIndicator.style.height = `${this.option.common.indicator.size}px`
+    this.elems.sbIndicator.style.border = `${this.option.common.indicator.border.thickness}px solid ${this.option.common.indicator.border.color}`
+    this.elems.sbIndicator.style.borderRadius = '50%'
+    this.elems.sbDragArea = document.createElement( 'div' )
+    this.elems.sbDragArea.style.position = 'fixed'
+    this.elems.sbDragArea.style.width = '100%'
+    this.elems.sbDragArea.style.height = '100%'
+    this.elems.sbDragArea.style.top = '0'
+    this.elems.sbDragArea.style.left = '0'
+    this.elems.sbDragArea.style.display = 'none'
+    this.elems.sbIndicator.appendChild( this.elems.sbDragArea )
+    this.drawSBIndicator()
+    this.elems.sbIndicator.addEventListener( 'mousedown', ( evt ) => {
+      this.state.sbSelect = true
+      this.elems.sbDragArea!!.style.display = 'block'
+      this.elems.sbIndicator!!.style.zIndex = '2'
+    } )
+    this.elems.sbIndicator.addEventListener( 'mouseup', ( evt ) => {
+      this.state.sbSelect = false
+      this.elems.sbDragArea!!.style.display = 'none'
+      this.elems.sbIndicator!!.style.zIndex = '1'
+    } )
+    this.elems.sbIndicator.addEventListener( 'mouseleave', ( evt ) => {
+      this.state.sbSelect = false
+      this.elems.sbDragArea!!.style.display = 'none'
+      this.elems.sbIndicator!!.style.zIndex = '1'
+    } )
+    this.elems.sbIndicator.addEventListener( 'mousemove', ( evt ) => {
+      if ( this.state.sbSelect ) this.setSB( evt.clientX, evt.clientY )
+    } )
+    this.elems.sbContainer!!.appendChild( this.elems.sbIndicator )
+  }
+
+  initSaturationIndicator() {
+    this.elems.saturationIndicator = document.createElement( 'div' )
+    this.elems.saturationIndicator.classList.add( this.option.saturation.indicator.class )
+    this.elems.saturationIndicator.style.position = 'absolute'
+    this.elems.saturationIndicator.style.boxSizing = 'border-box'
+    this.elems.saturationIndicator.style.zIndex = '1'
+    this.elems.saturationIndicator.style.width = `${this.option.saturation.indicator.size}px`
+    this.elems.saturationIndicator.style.height = `${this.option.saturation.indicator.size}px`
+    this.elems.saturationIndicator.style.border = `${this.option.saturation.indicator.border.thickness}px solid ${this.option.saturation.indicator.border.color}`
+    this.elems.saturationIndicator.style.borderRadius = '50%'
+    this.elems.saturationDragArea = document.createElement( 'div' )
+    this.elems.saturationDragArea.style.position = 'fixed'
+    this.elems.saturationDragArea.style.width = '100%'
+    this.elems.saturationDragArea.style.height = '100%'
+    this.elems.saturationDragArea.style.top = '0'
+    this.elems.saturationDragArea.style.left = '0'
+    this.elems.saturationDragArea.style.display = 'none'
+    this.elems.saturationIndicator.appendChild( this.elems.saturationDragArea )
+    this.drawSaturationIndicator()
+    this.elems.saturationIndicator.addEventListener( 'mousedown', ( evt ) => {
+      this.state.saturationSelect = true
+      this.elems.saturationDragArea!!.style.display = 'block'
+      this.elems.saturationIndicator!!.style.zIndex = '2'
+    } )
+    this.elems.saturationIndicator.addEventListener( 'mouseup', ( evt ) => {
+      this.state.saturationSelect = false
+      this.elems.saturationDragArea!!.style.display = 'none'
+      this.elems.saturationIndicator!!.style.zIndex = '1'
+    } )
+    this.elems.saturationIndicator.addEventListener( 'mouseleave', ( evt ) => {
+      this.state.saturationSelect = false
+      this.elems.saturationDragArea!!.style.display = 'none'
+      this.elems.saturationIndicator!!.style.zIndex = '1'
+    } )
+    this.elems.saturationIndicator.addEventListener( 'mousemove', ( evt ) => {
+      if ( this.state.saturationSelect ) this.setSaturation( evt.clientX, evt.clientY )
+    } )
+    this.elems.saturationContainer!!.appendChild( this.elems.saturationIndicator )
+  }
+
+  initBrightnessIndicator() {
+    this.elems.brightnessIndicator = document.createElement( 'div' )
+    this.elems.brightnessIndicator.classList.add( this.option.brightness.indicator.class )
+    this.elems.brightnessIndicator.style.position = 'absolute'
+    this.elems.brightnessIndicator.style.boxSizing = 'border-box'
+    this.elems.brightnessIndicator.style.zIndex = '1'
+    this.elems.brightnessIndicator.style.width = `${this.option.brightness.indicator.size}px`
+    this.elems.brightnessIndicator.style.height = `${this.option.brightness.indicator.size}px`
+    this.elems.brightnessIndicator.style.border = `${this.option.brightness.indicator.border.thickness}px solid ${this.option.brightness.indicator.border.color}`
+    this.elems.brightnessIndicator.style.borderRadius = '50%'
+    this.elems.brightnessDragArea = document.createElement( 'div' )
+    this.elems.brightnessDragArea.style.position = 'fixed'
+    this.elems.brightnessDragArea.style.width = '100%'
+    this.elems.brightnessDragArea.style.height = '100%'
+    this.elems.brightnessDragArea.style.top = '0'
+    this.elems.brightnessDragArea.style.left = '0'
+    this.elems.brightnessDragArea.style.display = 'none'
+    this.elems.brightnessIndicator.appendChild( this.elems.brightnessDragArea )
+    this.drawBrightnessIndicator()
+    this.elems.brightnessIndicator.addEventListener( 'mousedown', ( evt ) => {
+      this.state.brightnessSelect = true
+      this.elems.brightnessDragArea!!.style.display = 'block'
+      this.elems.brightnessIndicator!!.style.zIndex = '2'
+    } )
+    this.elems.brightnessIndicator.addEventListener( 'mouseup', ( evt ) => {
+      this.state.brightnessSelect = false
+      this.elems.brightnessDragArea!!.style.display = 'none'
+      this.elems.brightnessIndicator!!.style.zIndex = '1'
+    } )
+    this.elems.brightnessIndicator.addEventListener( 'mouseleave', ( evt ) => {
+      this.state.brightnessSelect = false
+      this.elems.brightnessDragArea!!.style.display = 'none'
+      this.elems.brightnessIndicator!!.style.zIndex = '1'
+    } )
+    this.elems.brightnessIndicator.addEventListener( 'mousemove', ( evt ) => {
+      if ( this.state.brightnessSelect ) this.setBrightness( evt.clientX, evt.clientY )
+    } )
+    this.elems.brightnessContainer!!.appendChild( this.elems.brightnessIndicator )
+  }
+
+  initIndicators() {
+    this.initHueIndicator()
+
     if ( this.option.sbSquare ) {
-      this.elems.sbIndicator = document.createElement( 'div' )
-      // this.elems.sbIndicator.classList.add( this.option.common.indicator.class )
-      this.elems.sbIndicator.style.position = 'absolute'
-      this.elems.sbIndicator.style.boxSizing = 'border-box'
-      this.elems.sbIndicator.style.zIndex = '1'
-      this.elems.sbIndicator.style.width = `${this.option.common.indicator.size}px`
-      this.elems.sbIndicator.style.height = `${this.option.common.indicator.size}px`
-      this.elems.sbIndicator.style.border = `${this.option.common.indicator.border.thickness}px solid ${this.option.common.indicator.border.color}`
-      this.elems.sbIndicator.style.borderRadius = '50%'
-      this.elems.sbDragArea = document.createElement( 'div' )
-      this.elems.sbDragArea.style.position = 'fixed'
-      this.elems.sbDragArea.style.width = '100%'
-      this.elems.sbDragArea.style.height = '100%'
-      this.elems.sbDragArea.style.top = '0'
-      this.elems.sbDragArea.style.left = '0'
-      this.elems.sbDragArea.style.display = 'none'
-      this.elems.sbIndicator.appendChild( this.elems.sbDragArea )
-      this.drawSBIndicator()
-      this.elems.sbIndicator.addEventListener( 'mousedown', ( evt ) => {
-        this.state.sbSelect = true
-        this.elems.sbDragArea!!.style.display = 'block'
-        this.elems.sbIndicator!!.style.zIndex = '2'
-      } )
-      this.elems.sbIndicator.addEventListener( 'mouseup', ( evt ) => {
-        this.state.sbSelect = false
-        this.elems.sbDragArea!!.style.display = 'none'
-        this.elems.sbIndicator!!.style.zIndex = '1'
-      } )
-      this.elems.sbIndicator.addEventListener( 'mouseleave', ( evt ) => {
-        this.state.sbSelect = false
-        this.elems.sbDragArea!!.style.display = 'none'
-        this.elems.sbIndicator!!.style.zIndex = '1'
-      } )
-      this.elems.sbIndicator.addEventListener( 'mousemove', ( evt ) => {
-        if ( this.state.sbSelect ) this.setSB( evt.clientX, evt.clientY )
-      } )
-      this.elems.sbContainer!!.appendChild( this.elems.sbIndicator )
+      this.initSbIndicator()
     }
     else {
-      // Init saturation indicator
-      this.elems.saturationIndicator = document.createElement( 'div' )
-      this.elems.saturationIndicator.classList.add( this.option.saturation.indicator.class )
-      this.elems.saturationIndicator.style.position = 'absolute'
-      this.elems.saturationIndicator.style.boxSizing = 'border-box'
-      this.elems.saturationIndicator.style.zIndex = '1'
-      this.elems.saturationIndicator.style.width = `${this.option.saturation.indicator.size}px`
-      this.elems.saturationIndicator.style.height = `${this.option.saturation.indicator.size}px`
-      this.elems.saturationIndicator.style.border = `${this.option.saturation.indicator.border.thickness}px solid ${this.option.saturation.indicator.border.color}`
-      this.elems.saturationIndicator.style.borderRadius = '50%'
-      this.elems.saturationDragArea = document.createElement( 'div' )
-      this.elems.saturationDragArea.style.position = 'fixed'
-      this.elems.saturationDragArea.style.width = '100%'
-      this.elems.saturationDragArea.style.height = '100%'
-      this.elems.saturationDragArea.style.top = '0'
-      this.elems.saturationDragArea.style.left = '0'
-      this.elems.saturationDragArea.style.display = 'none'
-      this.elems.saturationIndicator.appendChild( this.elems.saturationDragArea )
-      this.drawSaturationIndicator()
-      this.elems.saturationIndicator.addEventListener( 'mousedown', ( evt ) => {
-        this.state.saturationSelect = true
-        this.elems.saturationDragArea!!.style.display = 'block'
-        this.elems.saturationIndicator!!.style.zIndex = '2'
-      } )
-      this.elems.saturationIndicator.addEventListener( 'mouseup', ( evt ) => {
-        this.state.saturationSelect = false
-        this.elems.saturationDragArea!!.style.display = 'none'
-        this.elems.saturationIndicator!!.style.zIndex = '1'
-      } )
-      this.elems.saturationIndicator.addEventListener( 'mouseleave', ( evt ) => {
-        this.state.saturationSelect = false
-        this.elems.saturationDragArea!!.style.display = 'none'
-        this.elems.saturationIndicator!!.style.zIndex = '1'
-      } )
-      this.elems.saturationIndicator.addEventListener( 'mousemove', ( evt ) => {
-        if ( this.state.saturationSelect ) this.setSaturation( evt.clientX, evt.clientY )
-      } )
-      this.elems.saturationContainer!!.appendChild( this.elems.saturationIndicator )
-
-      // Init brightness indicator
-      this.elems.brightnessIndicator = document.createElement( 'div' )
-      this.elems.brightnessIndicator.classList.add( this.option.brightness.indicator.class )
-      this.elems.brightnessIndicator.style.position = 'absolute'
-      this.elems.brightnessIndicator.style.boxSizing = 'border-box'
-      this.elems.brightnessIndicator.style.zIndex = '1'
-      this.elems.brightnessIndicator.style.width = `${this.option.brightness.indicator.size}px`
-      this.elems.brightnessIndicator.style.height = `${this.option.brightness.indicator.size}px`
-      this.elems.brightnessIndicator.style.border = `${this.option.brightness.indicator.border.thickness}px solid ${this.option.brightness.indicator.border.color}`
-      this.elems.brightnessIndicator.style.borderRadius = '50%'
-      this.elems.brightnessDragArea = document.createElement( 'div' )
-      this.elems.brightnessDragArea.style.position = 'fixed'
-      this.elems.brightnessDragArea.style.width = '100%'
-      this.elems.brightnessDragArea.style.height = '100%'
-      this.elems.brightnessDragArea.style.top = '0'
-      this.elems.brightnessDragArea.style.left = '0'
-      this.elems.brightnessDragArea.style.display = 'none'
-      this.elems.brightnessIndicator.appendChild( this.elems.brightnessDragArea )
-      this.drawBrightnessIndicator()
-      this.elems.brightnessIndicator.addEventListener( 'mousedown', ( evt ) => {
-        this.state.brightnessSelect = true
-        this.elems.brightnessDragArea!!.style.display = 'block'
-        this.elems.brightnessIndicator!!.style.zIndex = '2'
-      } )
-      this.elems.brightnessIndicator.addEventListener( 'mouseup', ( evt ) => {
-        this.state.brightnessSelect = false
-        this.elems.brightnessDragArea!!.style.display = 'none'
-        this.elems.brightnessIndicator!!.style.zIndex = '1'
-      } )
-      this.elems.brightnessIndicator.addEventListener( 'mouseleave', ( evt ) => {
-        this.state.brightnessSelect = false
-        this.elems.brightnessDragArea!!.style.display = 'none'
-        this.elems.brightnessIndicator!!.style.zIndex = '1'
-      } )
-      this.elems.brightnessIndicator.addEventListener( 'mousemove', ( evt ) => {
-        if ( this.state.brightnessSelect ) this.setBrightness( evt.clientX, evt.clientY )
-      } )
-      this.elems.brightnessContainer!!.appendChild( this.elems.brightnessIndicator )
+      this.initSaturationIndicator()
+      this.initBrightnessIndicator()
     }
   }
 
@@ -744,5 +760,22 @@ export class HSVPicker extends HTMLElement {
     blackGrad.addColorStop( 0.98, 'black' )
     sbCTX.fillStyle = blackGrad
     sbCTX.fillRect( 0, 0, this.option.saturation.picker.length, this.option.brightness.picker.length )
+  }
+
+  initSelectedColor() {
+    if ( this.option.selected.show ) {
+      this.elems.selectedColor = document.createElement( 'div' )
+      this.elems.selectedColor.style.position = 'relative'
+      this.elems.selectedColor.style.width = `${this.option.selected.width}px`
+      this.elems.selectedColor.style.height = `${this.option.selected.height}px`
+      this.elems.selectedColor.style.backgroundColor = this.value
+      this.appendChild( this.elems.selectedColor )
+    }
+  }
+
+  drawSelectedColor() {
+    if ( this.option.selected.show ) {
+      this.elems.selectedColor!!.style.backgroundColor = this.value
+    }
   }
 }
