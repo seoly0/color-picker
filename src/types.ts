@@ -4,15 +4,17 @@ type IndicatorType = 'circle' | 'rectangle'
 
 export interface HSVPickerOptions {
   valueType: 'hex' | 'rgb'
-  sbSquare: boolean
+  svPlane: boolean
 
   common: {
     picker: {
+      class: string
       direction: LinearDirection
       length: number
       thickness: number
     }
     indicator: {
+      class: string
       type: IndicatorType
       size: number
       border: {

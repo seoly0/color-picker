@@ -14,15 +14,17 @@ export class HSVPicker extends HTMLElement {
     this.option = {
       valueType: 'hex', // hex, rgb
 
-      sbSquare: false,
+      svPlane: false,
 
       common: {
         picker: {
+          class: '',
           direction: 'horizontal',
           length: 0,
           thickness: 0,
         },
         indicator: {
+          class: '',
           type: 'circle',
           size: 16,
           border: {
@@ -142,7 +144,7 @@ export class HSVPicker extends HTMLElement {
     this.initCanvas()
 
     this.drawHuePicker()
-    if ( this.option.sbSquare ) {
+    if ( this.option.svPlane ) {
       this.drawSBPicker()
     }
     else {
@@ -158,7 +160,25 @@ export class HSVPicker extends HTMLElement {
   }
 
   initOption() {
-    this.option.sbSquare = this.hasAttribute( 'sb-square' )
+    this.option.svPlane = this.hasAttribute( 'sv-plane' )
+    console.log( this.option.svPlane )
+
+    this.option.common.picker.class = this.getAttribute( 'picker-class' ) ?? 'picker'
+    this.option.common.picker.direction = valueUtils.assert( this.getAttribute( 'picker-direction' ), [ 'horizontal', 'vertical' ], 'horizontal' )
+    this.option.common.picker.length = valueUtils.toInt( this.getAttribute( 'picker-length' ), 200 )
+    this.option.common.picker.thickness = valueUtils.toInt( this.getAttribute( 'picker-thickness' ), 10 )
+
+    this.option.common.indicator.class = this.getAttribute( 'indicator-class' ) ?? 'indicator'
+    this.option.common.indicator.type = valueUtils.assert( this.getAttribute( 'indicator-type' ), [ 'circle', 'rectangle' ], 'circle' )
+    this.option.common.indicator.size = valueUtils.toInt( this.getAttribute( 'indicator-size' ), 16 )
+    this.option.common.indicator.border.color = this.getAttribute( 'indicator-border-color' ) ?? 'white'
+    this.option.common.indicator.border.thickness = valueUtils.toInt( this.getAttribute( 'indicator-border-thickness' ), 2 )
+
+    this.option.saturation.indicator.class = this.getAttribute( 'saturation-indicator-class' ) ?? 'saturation-indicator'
+    this.option.saturation.indicator.type = valueUtils.assert( this.getAttribute( 'saturation-indicator-type' ), [ 'circle', 'rectangle' ], 'circle' )
+    this.option.saturation.indicator.size = valueUtils.toInt( this.getAttribute( 'saturation-indicator-size' ), 16 )
+    this.option.saturation.indicator.border.color = this.getAttribute( 'saturation-indicator-border-color' ) ?? 'white'
+    this.option.saturation.indicator.border.thickness = valueUtils.toInt( this.getAttribute( 'saturation-indicator-border-thickness' ), 2 )
 
     this.option.hue.picker.class = this.getAttribute( 'hue-picker-class' ) ?? 'hue-picker'
     this.option.hue.picker.type = valueUtils.assert( this.getAttribute( 'hue-picker-type' ), [ 'linear', 'circular' ], 'linear' )
@@ -207,7 +227,7 @@ export class HSVPicker extends HTMLElement {
 
       this.state.huePosition = h / 360 * this.option.hue.picker.length
       this.state.saturationPosition = s * this.option.saturation.picker.length
-      const dir = this.option.sbSquare ? ( 1 - v ) : v
+      const dir = this.option.svPlane ? ( 1 - v ) : v
       this.state.brightnessPosition = dir * this.option.brightness.picker.length
     }
     else {
@@ -254,7 +274,7 @@ export class HSVPicker extends HTMLElement {
 
     this.dispatch()
     this.drawHueIndicator()
-    if ( this.option.sbSquare ) {
+    if ( this.option.svPlane ) {
       this.drawSBIndicator()
       this.drawSBPicker()
     }
@@ -379,7 +399,7 @@ export class HSVPicker extends HTMLElement {
   initContainer() {
     this.initHueContainer()
 
-    if ( this.option.sbSquare ) {
+    if ( this.option.svPlane ) {
       this.initSbContainer()
     }
     else {
@@ -447,7 +467,7 @@ export class HSVPicker extends HTMLElement {
   initCanvas() {
     this.initHueCanvas()
 
-    if ( this.option.sbSquare ) {
+    if ( this.option.svPlane ) {
       this.initSbCanvas()
     }
     else {
@@ -619,7 +639,7 @@ export class HSVPicker extends HTMLElement {
   initIndicators() {
     this.initHueIndicator()
 
-    if ( this.option.sbSquare ) {
+    if ( this.option.svPlane ) {
       this.initSbIndicator()
     }
     else {
@@ -740,7 +760,7 @@ export class HSVPicker extends HTMLElement {
   }
 
   drawSBPicker() {
-    if ( this.option.sbSquare ) {
+    if ( this.option.svPlane ) {
       this.elems.sbCanvas!!.width = this.option.saturation.picker.length
       this.elems.sbCanvas!!.height = this.option.brightness.picker.length
     }
