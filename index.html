@@ -2,43 +2,22 @@
 
 <html>
 <head>
+  <style>
+    .my-picker {
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- sb-square -->
   <hsv-picker 
     id="picker" 
+    class="my-picker"
     value="red"
-
-    picker-class=""
-    picker-direction=""
-    picker-length=""
-    picker-thickness=""
-
-    indicator-class=""
-    indicator-type=""
-    indicator-size=""
-    indicator-border-thickness=""
-    indicator-border-color=""
-
-    hue-picker-class="hue-picker"
-    hue-picker-type="linear"
-    hue-picker-direction="horizontal"
-    hue-picker-length="200"
-    hue-picker-thickness="10"
-    hue-indicator-class="hue-indicator"
-    
-    saturation-picker-class="saturation-picker"
-    saturation-picker-direction="horizontal"
-    saturation-picker-length="200"
-    saturation-picker-thickness="10"
-    saturation-indicator-class="saturation-indicator"
-    
-    brightness-picker-class="brightness-picker"
-    brightness-picker-direction="horizontal"
-    brightness-picker-length="200"
-    brightness-picker-thickness="10"
-    brightness-indicator-class="brightness-indicator"
+    picker-direction="vertical"
+    show-selected
   ></hsv-picker>
 
   <br />
@@ -67,6 +46,8 @@
   brightness-picker-length="200"
   brightness-picker-thickness="10"
   brightness-indicator-class="brightness-indicator"
+
+  show-selected
 ></hsv-picker>
 </body>
 
