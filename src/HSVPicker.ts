@@ -124,25 +124,20 @@ export class HSVPicker extends HTMLElement {
   }
 
   attributeChangedCallback( attrName: string, oldVal: any, newVal: any ) {
-    // if (attrName == 'value') {
-    //   this.svSelector.style.background = this.drawSVSelectorCSS(newVal)
-    // }
+    if ( oldVal && attrName == 'value' ) {
+      this.initValue()
+      this.initState()
+      this.initialDraw()
+    }
   }
 
-  connectedCallback() {
-    this.style.position = 'relative'
-
+  initValue() {
     this.value = this.getAttribute( 'value' ) ?? 'red'
     if ( !!!CSS.supports( 'color', this.value ) ) throw Error( `init value is not valid: ${this.value}` )
     this.value = this.standardize( this.value )
+  }
 
-    this.initOption()
-    this.initState()
-    this.initContainer()
-    this.initSelectedColor()
-    this.initIndicators()
-    this.initCanvas()
-
+  initialDraw() {
     this.drawHuePicker()
     if ( this.option.svPlane ) {
       this.drawSBPicker()
@@ -151,6 +146,21 @@ export class HSVPicker extends HTMLElement {
       this.drawSaturationPicker()
       this.drawBrightnessPicker()
     }
+  }
+
+  connectedCallback() {
+    this.style.position = 'relative'
+
+    this.initValue()
+
+    this.initOption()
+    this.initState()
+    this.initContainer()
+    this.initSelectedColor()
+    this.initIndicators()
+    this.initCanvas()
+
+    this.initialDraw()
   }
 
   standardize( str: string ) {
@@ -236,6 +246,7 @@ export class HSVPicker extends HTMLElement {
     const hex = colorUtils.hsvToHex( { h: this.state.hue, s: this.state.saturation, v: this.state.brightness } )
 
     this.value = hex
+    // this.setAttribute( 'value', this.value ) // TODO
     const inputEvent = new InputEvent( 'input', {
       bubbles: true,
       cancelable: false,
@@ -479,6 +490,7 @@ export class HSVPicker extends HTMLElement {
     this.elems.hueIndicator = document.createElement( 'div' )
     this.elems.hueIndicator.classList.add( this.option.hue.indicator.class )
     this.elems.hueIndicator.style.position = 'absolute'
+    this.elems.hueIndicator.style.userSelect = 'none'
     this.elems.hueIndicator.style.boxSizing = 'border-box'
     this.elems.hueIndicator.style.boxShadow = '0 0 3px 1px grey'
     this.elems.hueIndicator.style.zIndex = '1'
@@ -521,6 +533,7 @@ export class HSVPicker extends HTMLElement {
     this.elems.sbIndicator = document.createElement( 'div' )
     // this.elems.sbIndicator.classList.add( this.option.common.indicator.class )
     this.elems.sbIndicator.style.position = 'absolute'
+    this.elems.sbIndicator.style.userSelect = 'none'
     this.elems.sbIndicator.style.boxSizing = 'border-box'
     this.elems.sbIndicator.style.boxShadow = '0 0 3px 1px grey'
     this.elems.sbIndicator.style.zIndex = '1'
@@ -563,6 +576,7 @@ export class HSVPicker extends HTMLElement {
     this.elems.saturationIndicator = document.createElement( 'div' )
     this.elems.saturationIndicator.classList.add( this.option.saturation.indicator.class )
     this.elems.saturationIndicator.style.position = 'absolute'
+    this.elems.saturationIndicator.style.userSelect = 'none'
     this.elems.saturationIndicator.style.boxSizing = 'border-box'
     this.elems.saturationIndicator.style.boxShadow = '0 0 3px 1px grey'
     this.elems.saturationIndicator.style.zIndex = '1'
@@ -604,6 +618,7 @@ export class HSVPicker extends HTMLElement {
     this.elems.brightnessIndicator = document.createElement( 'div' )
     this.elems.brightnessIndicator.classList.add( this.option.brightness.indicator.class )
     this.elems.brightnessIndicator.style.position = 'absolute'
+    this.elems.brightnessIndicator.style.userSelect = 'none'
     this.elems.brightnessIndicator.style.boxSizing = 'border-box'
     this.elems.brightnessIndicator.style.boxShadow = '0 0 3px 1px grey'
     this.elems.brightnessIndicator.style.zIndex = '1'

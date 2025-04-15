@@ -56,11 +56,15 @@
 
   customElements.define('hsv-picker', HSVPicker)
 
-  document.getElementById('picker').addEventListener('input', (evt) => {
-    console.log(evt.data)
+  const picker1 = document.getElementById('picker')
+  picker1.addEventListener('input', (evt) => {
+    // console.log(evt.data)
+    picker2.setAttribute('value', evt.data)
   })
-  document.getElementById('picker2').addEventListener('input', (evt) => {
-    console.log(evt.data)
+  const picker2=  document.getElementById('picker2')
+  picker2.addEventListener('input', (evt) => {
+    picker1.setAttribute('value', evt.data)
+    // console.log(evt.data)
   })
 </script>
 
