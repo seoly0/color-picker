@@ -98,6 +98,8 @@ export interface HSVPickerState {
   sbSelect: boolean
   saturationSelect: boolean
   brightnessSelect: boolean
+
+  self: boolean
 }
 
 export interface HSVPickerElems {

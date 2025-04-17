@@ -110,6 +110,7 @@ export class HSVPicker extends HTMLElement {
       sbSelect: false,
       saturationSelect: false,
       brightnessSelect: false,
+      self: false,
     }
 
     // HTML 요소
@@ -125,9 +126,22 @@ export class HSVPicker extends HTMLElement {
 
   attributeChangedCallback( attrName: string, oldVal: any, newVal: any ) {
     if ( oldVal && attrName == 'value' ) {
-      this.initValue()
-      this.initState()
+      if ( !this.state.self ) {
+        this.initValue()
+        this.initState()
+      }
+      this.state.self = false
       this.initialDraw()
+
+      this.drawHueIndicator()
+      if ( this.option.svPlane ) {
+        this.drawSBIndicator()
+      }
+      else {
+        this.drawBrightnessIndicator()
+        this.drawSaturationIndicator()
+      }
+      this.drawSelectedColor()
     }
   }
 
@@ -246,12 +260,13 @@ export class HSVPicker extends HTMLElement {
     const hex = colorUtils.hsvToHex( { h: this.state.hue, s: this.state.saturation, v: this.state.brightness } )
 
     this.value = hex
-    // this.setAttribute( 'value', this.value ) // TODO
+    this.setAttribute( 'value', this.value ) // TODO
     const inputEvent = new InputEvent( 'input', {
       bubbles: true,
       cancelable: false,
       data: hex,
     } )
+    this.state.self = true
     this.dispatchEvent( inputEvent )
   }
 
@@ -281,18 +296,18 @@ export class HSVPicker extends HTMLElement {
     this.state.hueHex = hueHex
 
     this.dispatch()
-    this.drawHueIndicator()
-    if ( this.option.svPlane ) {
-      this.drawSBIndicator()
-      this.drawSBPicker()
-    }
-    else {
-      this.drawSaturationPicker()
-      this.drawSaturationIndicator()
-      this.drawBrightnessPicker()
-      this.drawBrightnessIndicator()
-    }
-    this.drawSelectedColor()
+    // this.drawHueIndicator()
+    // if ( this.option.svPlane ) {
+    //   this.drawSBIndicator()
+    //   this.drawSBPicker()
+    // }
+    // else {
+    //   this.drawSaturationPicker()
+    //   this.drawSaturationIndicator()
+    //   this.drawBrightnessPicker()
+    //   this.drawBrightnessIndicator()
+    // }
+    // this.drawSelectedColor()
   }
 
   setSaturation( X: number, Y: number ) {
@@ -314,11 +329,11 @@ export class HSVPicker extends HTMLElement {
     this.state.saturation = this.state.saturationPosition / this.option.saturation.picker.length
 
     this.dispatch()
-    this.drawSaturationPicker()
-    this.drawSaturationIndicator()
-    this.drawBrightnessPicker()
-    this.drawBrightnessIndicator()
-    this.drawSelectedColor()
+    // this.drawSaturationPicker()
+    // this.drawSaturationIndicator()
+    // this.drawBrightnessPicker()
+    // this.drawBrightnessIndicator()
+    // this.drawSelectedColor()
   }
 
   setBrightness( X: number, Y: number ) {
@@ -340,11 +355,11 @@ export class HSVPicker extends HTMLElement {
     this.state.brightness = this.state.brightnessPosition / this.option.brightness.picker.length
 
     this.dispatch()
-    this.drawSaturationPicker()
-    this.drawSaturationIndicator()
-    this.drawBrightnessPicker()
-    this.drawBrightnessIndicator()
-    this.drawSelectedColor()
+    // this.drawSaturationPicker()
+    // this.drawSaturationIndicator()
+    // this.drawBrightnessPicker()
+    // this.drawBrightnessIndicator()
+    // this.drawSelectedColor()
   }
 
   setSB( X: number, Y: number ) {
@@ -369,9 +384,9 @@ export class HSVPicker extends HTMLElement {
     this.state.brightness = v
 
     this.dispatch()
-    this.drawHueIndicator()
-    this.drawSBIndicator()
-    this.drawSelectedColor()
+    // this.drawHueIndicator()
+    // this.drawSBIndicator()
+    // this.drawSelectedColor()
   }
 
   initHueContainer() {
