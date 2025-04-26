@@ -277,14 +277,16 @@ export class HSVPicker extends HTMLElement {
     let y = Y - rect.y
     x = x > 0 ? x : 0
     y = y > 0 ? y : 0
+    const xPos = x < rect.width ? x : rect.width
+    const yPos = y < rect.height ? y : rect.height
     x = x < rect.width ? x : rect.width - 1
     y = y < rect.height ? y : rect.height - 1
 
     if ( this.option.hue.picker.type == 'linear' && this.option.hue.picker.direction == 'horizontal' ) {
-      this.state.huePosition = x
+      this.state.huePosition = xPos
     }
     else if ( this.option.hue.picker.type == 'linear' && this.option.hue.picker.direction == 'vertical' ) {
-      this.state.huePosition = y
+      this.state.huePosition = yPos
     }
 
     const ctx = this.elems.hueCanvas!!.getContext( '2d' )!!
@@ -317,8 +319,8 @@ export class HSVPicker extends HTMLElement {
     let y = Y - rect.y
     x = x > 0 ? x : 0
     y = y > 0 ? y : 0
-    x = x < rect.width ? x : rect.width - 1
-    y = y < rect.height ? y : rect.height - 1
+    x = x < rect.width ? x : rect.width // - 1
+    y = y < rect.height ? y : rect.height // - 1
 
     if ( this.option.saturation.picker.direction == 'horizontal' ) {
       this.state.saturationPosition = x
@@ -343,8 +345,8 @@ export class HSVPicker extends HTMLElement {
     let y = Y - rect.y
     x = x > 0 ? x : 0
     y = y > 0 ? y : 0
-    x = x < rect.width ? x : rect.width - 1
-    y = y < rect.height ? y : rect.height - 1
+    x = x < rect.width ? x : rect.width // - 1
+    y = y < rect.height ? y : rect.height // - 1
 
     if ( this.option.brightness.picker.direction == 'horizontal' ) {
       this.state.brightnessPosition = x
