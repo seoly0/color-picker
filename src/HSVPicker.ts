@@ -743,13 +743,13 @@ export class HSVPicker extends HTMLElement {
         const hueCTX = this.elems.hueCanvas!!.getContext( '2d', { willReadFrequently: true } )!!
 
         const hueGrad = hueCTX.createLinearGradient( 0, 0, this.option.hue.picker.length, 0 )
-        hueGrad.addColorStop( 0 / 6, '#ff0000' )
+        hueGrad.addColorStop( 0.1 / 6, '#ff0000' )
         hueGrad.addColorStop( 1 / 6, '#ffff00' )
         hueGrad.addColorStop( 2 / 6, '#00ff00' )
         hueGrad.addColorStop( 3 / 6, '#00ffff' )
         hueGrad.addColorStop( 4 / 6, '#0000ff' )
         hueGrad.addColorStop( 5 / 6, '#ff00ff' )
-        hueGrad.addColorStop( 6 / 6, '#ff0000' )
+        hueGrad.addColorStop( 5.9 / 6, '#ff0000' )
 
         hueCTX.fillStyle = hueGrad
         hueCTX.fillRect( 0, 0, this.option.hue.picker.length, this.option.hue.picker.thickness )
@@ -762,13 +762,13 @@ export class HSVPicker extends HTMLElement {
         const hueCTX = this.elems.hueCanvas!!.getContext( '2d', { willReadFrequently: true } )!!
 
         const hueGrad = hueCTX.createLinearGradient( 0, 0, 0, this.option.hue.picker.length )
-        hueGrad.addColorStop( 0 / 6, '#ff0000' )
+        hueGrad.addColorStop( 0.1 / 6, '#ff0000' )
         hueGrad.addColorStop( 1 / 6, '#ffff00' )
         hueGrad.addColorStop( 2 / 6, '#00ff00' )
         hueGrad.addColorStop( 3 / 6, '#00ffff' )
         hueGrad.addColorStop( 4 / 6, '#0000ff' )
         hueGrad.addColorStop( 5 / 6, '#ff00ff' )
-        hueGrad.addColorStop( 6 / 6, '#ff0000' )
+        hueGrad.addColorStop( 5.9 / 6, '#ff0000' )
 
         hueCTX.fillStyle = hueGrad
         hueCTX.fillRect( 0, 0, this.option.hue.picker.thickness, this.option.hue.picker.length )
